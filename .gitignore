@@ -1,0 +1,11 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+.cmake-build-debug
+cmake-build-debug
+build
+
+bt-ibutton-reader*
