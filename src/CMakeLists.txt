@@ -8,15 +8,24 @@ set(${PROJECT_NAME}_BOARD nano328)
 
 # Define the sources
 set(${PROJECT_NAME}_SRCS OW_Bandit.cpp)
-#set(${PROJECT_NAME}_SRCS MAX17043.cpp)
 
 # Define the headers
-#set(${PROJECT_NAME}_HDRS serial.h)
-#set(${PROJECT_NAME}_HDRS MAX17043.h)
+
+
+generate_arduino_library(OW_Bandit_lib
+        SRCS MAX17043/MAX17043.cpp
+             OneWire/OneWire.cpp
+        HDRS MAX17043/MAX17043.h
+             OneWire/OneWire.h
+        BOARD uno)
 
 
 # Define the port for uploading code to the Arduino
 #set(${PROJECT_NAME}_PORT COM1)
 
 # Command to generate code arduino firmware (.hex file)
-generate_arduino_firmware(${PROJECT_NAME})
+generate_arduino_firmware(${PROJECT_NAME}
+        SRCS OW_Bandit.cpp
+        LIBS OW_Bandit_lib
+        BOARD uno
+        )
