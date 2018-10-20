@@ -8,4 +8,29 @@
 cmake-build-debug
 build
 
-bt-ibutton-reader*
+#########################################
+Sources, that appears after project load
+#########################################
+
+CDC.cpp
+HardwareSerial.cpp
+HID.cpp
+IPAddress.cpp
+main.cpp
+malloc.c
+new.cpp
+Print.cpp
+realloc.c
+Stream.cpp
+Tone.cpp
+twi.c
+USBCore.cpp
+WInterrupts.c
+Wire.cpp
+wiring.c
+wiring_analog.c
+wiring_digital.c
+wiring_pulse.c
+wiring_shift.c
+WMath.cpp
+WString.cpp
