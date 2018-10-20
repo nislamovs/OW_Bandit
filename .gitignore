@@ -1,4 +1,5 @@
-### IntelliJ IDEA ###
+### IntelliJ IDEA ###.
+**/.idea/*
 .idea
 *.iws
 *.iml
