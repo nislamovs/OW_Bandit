@@ -1,65 +1,57 @@
 #include "Arduino.h"
 #include <util/delay.h>
-
+#include "Wire.h"
 
 #include "MAX17043/MAX17043.h"
 #include "OneWire/OneWire.h"
-#include "Wire.h"
+#include "OW_Bandit_lib/OW_Bandit_lib.h"
 
 MAX17043 batteryMonitor;
 OneWire  ow(12); // digital pin 12
+OW_Bandit_lib OWB;
 
 void setup() {
 
     Wire.begin();
-    Serial.begin(9600);
-
-    Serial.println("MAX17043 Example: reading voltage and SoC");
-    Serial.println();
+    Serial.begin(115200);
 
     batteryMonitor.reset();
     batteryMonitor.quickStart();
     delay(1000);
 
-    float cellVoltage = batteryMonitor.getVCell();
-    Serial.print("Voltage:\t\t");
-    Serial.print(cellVoltage, 4);
-    Serial.println("V");
-
-    float stateOfCharge = batteryMonitor.getSoC();
-    Serial.print("State of charge:\t");
-    Serial.print(stateOfCharge);
-    Serial.println("%");
+    OWB.displayMenu();
 }
 
 void loop() {
-    while(true) {
-        byte addr[8] = {0};
 
-        if (!ow.search(addr)) {
-//                serial.println("No more addresses.");
-            ow.reset_search();
-            break;
-        }
+    // read from the serial input
+    if (Serial.available() > 0) {
+//         get a command
+        char inByte = Serial.read();
+        switch (inByte) {
+            case 'M':
+            case 'm':
+            case 'H':
+            case 'h':
+            case '?':
+                OWB.displayMenu();
+                break;
 
-        for (int i = 0; i < 8; i++) {
-            char buffer[2];
-            sprintf(buffer, "%02X", addr[i]);
-            Serial.print(buffer);
-        }
-        Serial.println("");
+            case '0':
+                Serial.println("Battery status:");
+                OWB.getBatteryStatus(batteryMonitor);
+                delay(1000);
+                break;
 
-        if (OneWire::crc8(addr, 7) != addr[7]) {
-            Serial.println("CRC is not valid!");
-            break;
-        }
+            case '1':
+                Serial.println("Read iButton:");
+                OWB.readIButton(ow);
+                break;
 
-        if (addr[0] != 0x01) {
-            Serial.println("Device is not a DS1990A family device.");
-            break;
+            default:
+                Serial.println((String)"Unknown command: [" + inByte + "] ");
+                break;
         }
-        ow.reset();
+        OWB.displayMenu();
     }
-    _delay_ms(600);
-
 }

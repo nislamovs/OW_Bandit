@@ -13,9 +13,11 @@ set(${PROJECT_NAME}_SRCS OW_Bandit.cpp)
 
 
 generate_arduino_library(OW_Bandit_lib
-        SRCS MAX17043/MAX17043.cpp
+        SRCS OW_Bandit_lib/OW_Bandit_lib.cpp
+             MAX17043/MAX17043.cpp
              OneWire/OneWire.cpp
-        HDRS MAX17043/MAX17043.h
+        HDRS OW_Bandit_lib/OW_Bandit_lib.h
+             MAX17043/MAX17043.h
              OneWire/OneWire.h
         BOARD uno)
 

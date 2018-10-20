@@ -1,0 +1,25 @@
+TODO:
+
+Create instructions on README.MD
+Rename repo
+Create schematic in Fritzner
+Add TP4056 charger                                                  OK
+Set correct resistor for charging current                           NOT NEEDED
+Add charging diode indication
+
+
+
+Add script for HC-06 setup via usb-uart converter
+Create menu
+Possibilities:
+
+- Check battery status
+- Read iButton
+- Read iButton and save in memory
+- Get all recorded iButton codes
+- manual write iButton
+- Write memory value to iButton
+- Clone ibutton
+- Emulate iButton
+
+
