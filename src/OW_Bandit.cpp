@@ -5,10 +5,14 @@
 #include "MAX17043/MAX17043.h"
 #include "OneWire/OneWire.h"
 #include "OW_Bandit_lib/OW_Bandit_lib.h"
+#include "OneWireSlave/OneWireSlave.h"
 
 MAX17043 batteryMonitor;
-OneWire  ow(12); // digital pin 12
+OneWire      ow(12); // digital pin 12
+OneWireSlave ows(11);
 OW_Bandit_lib OWB;
+
+unsigned char rom[8] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
 
 void setup() {
 
@@ -46,6 +50,12 @@ void loop() {
             case '1':
                 Serial.println("Read iButton:");
                 OWB.readIButton(ow);
+                break;
+
+            case '7':
+                Serial.println("Emulate iButton: ");
+                ows.init(rom);
+                ows.waitForRequest(false);
                 break;
 
             default:

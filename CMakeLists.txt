@@ -19,6 +19,3 @@ print_programmer_list()
 
 #add the example directory into build
 add_subdirectory(src)
-#add_subdirectory(src/MAX17043)
-#add_subdirectory(src/OneWire)
-#add_subdirectory(src/OW_Bandit_lib)

@@ -13,13 +13,15 @@ Add script for HC-06 setup via usb-uart converter
 Create menu
 Possibilities:
 
-- Check battery status
-- Read iButton
+- Check battery status                                              OK
+- Read iButton                                                      OK
 - Read iButton and save in memory
 - Get all recorded iButton codes
-- manual write iButton
+- Manual write iButton
 - Write memory value to iButton
 - Clone ibutton
-- Emulate iButton
+- Emulate iButton                                                   OK
 
+- Read memory values (with pagination)
+- Manual write to memory (with validation)
 
