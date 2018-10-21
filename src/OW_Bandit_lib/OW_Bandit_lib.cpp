@@ -86,7 +86,7 @@ void OW_Bandit_lib::getBatteryStatus() {
 
 void OW_Bandit_lib::emulateIButton() {
     Serial.println("Press 'M' to get back.");
-    
+
     unsigned char rom[IBUTTON_KEY_LENGTH] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
 
     ows.init(rom);

@@ -17,20 +17,20 @@
 class OW_Bandit_lib {
 
 
-    public:
-        OW_Bandit_lib();
-        void begin();
-        void displayMenu();
-        void getBatteryStatus();
-        void readIButton(boolean saveToMemory);
-        void emulateIButton();
-        void soundBeacon();
+public:
+    OW_Bandit_lib();
+    void begin();
+    void displayMenu();
+    void getBatteryStatus();
+    void readIButton(boolean saveToMemory);
+    void emulateIButton();
+    void soundBeacon();
 
-    private:
-        static MAX17043 batteryMonitor;
-        static OneWire ow;
-        static OneWireSlave ows;
-        static EE24C32 eeprom;
+private:
+    static MAX17043 batteryMonitor;
+    static OneWire ow;
+    static OneWireSlave ows;
+    static EE24C32 eeprom;
 };
 
 extern OW_Bandit_lib OW_BANDIT;
