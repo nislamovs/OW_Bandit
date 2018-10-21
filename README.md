@@ -1,4 +1,6 @@
-Bluetooth iButton Reader
+Bluetooth iButton Reader/Writer/Emulator/Copier
+
+Status : Development
 
 
 **Diagnostics**
