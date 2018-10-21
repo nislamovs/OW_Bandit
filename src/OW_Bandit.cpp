@@ -4,28 +4,25 @@
 
 #include "MAX17043/MAX17043.h"
 #include "OneWire/OneWire.h"
-#include "OW_Bandit_lib/OW_Bandit_lib.h"
 #include "OneWireSlave/OneWireSlave.h"
+#include "EE24C32/EE24C32.h"
+#include "OW_Bandit_lib/OW_Bandit_lib.h"
 
-#define ONE_WIRE_HOST 12  // digital pin 12
-#define ONE_WIRE_SLAVE 11
-#define BUZZER 10
+//#define EEPROM_ADDRESS 0x50
 
-
-MAX17043 batteryMonitor;
-OneWire ow(ONE_WIRE_HOST);
-OW_Bandit_lib OWB;
+//MAX17043 batteryMonitor;
+//OneWire ow(ONE_WIRE_HOST);
+OW_Bandit_lib OW_BANDIT;
+//EE24C32 eeprom(EEPROM_ADDRESS);
 
 void setup() {
 
     Wire.begin();
     Serial.begin(115200);
-
-    batteryMonitor.reset();
-    batteryMonitor.quickStart();
+    OW_BANDIT.begin();
     delay(1000);
 
-    OWB.displayMenu();
+    OW_BANDIT.displayMenu();
 }
 
 void loop() {
@@ -40,28 +37,33 @@ void loop() {
             case 'H':
             case 'h':
             case '?':
-                OWB.displayMenu();
+                OW_BANDIT.displayMenu();
                 break;
 
             case '0':
                 Serial.println("Battery status:");
-                OWB.getBatteryStatus(batteryMonitor);
+                OW_BANDIT.getBatteryStatus();
                 break;
 
             case '1':
                 Serial.println("Read iButton:");
-                OWB.readIButton(ow);
+                OW_BANDIT.readIButton(false);
+                break;
+
+            case '2':
+                Serial.println("Read iButton and save to memory:");
+                OW_BANDIT.readIButton(true);
                 break;
 
             case '7':
                 Serial.println("Emulate iButton: ");
-                OWB.emulateIButton(ONE_WIRE_SLAVE);
+                OW_BANDIT.emulateIButton();
                 break;
 
             case 'A':
             case 'a':
                 Serial.println("Sound beacon: ");
-                OWB.soundBeacon(BUZZER);
+                OW_BANDIT.soundBeacon();
                 break;
 
             default:
@@ -69,6 +71,6 @@ void loop() {
                 break;
         }
         delay(1000);
-        OWB.displayMenu();
+        OW_BANDIT.displayMenu();
     }
 }

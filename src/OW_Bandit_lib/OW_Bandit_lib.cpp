@@ -1,9 +1,26 @@
 #include "Arduino.h"
-#include <MAX17043.h>
-#include <OneWire.h>
-#include <OneWireSlave.h>
+//#include <MAX17043.h>
+//#include <OneWire.h>
+//#include <OneWireSlave.h>
+//#include <EE24C32.h>
 
 #include "OW_Bandit_lib.h"
+
+// Initialize Class Variables //////////////////////////////////////////////////
+MAX17043 OW_Bandit_lib::batteryMonitor;
+OneWire OW_Bandit_lib::ow(ONE_WIRE_HOST);
+OneWireSlave OW_Bandit_lib::ows(ONE_WIRE_SLAVE);
+EE24C32 OW_Bandit_lib::eeprom(EEPROM_ADDRESS);
+
+// Constructors ////////////////////////////////////////////////////////////////
+OW_Bandit_lib::OW_Bandit_lib()
+{
+}
+
+void OW_Bandit_lib::begin() {
+    batteryMonitor.reset();
+    batteryMonitor.quickStart();
+}
 
 void OW_Bandit_lib::displayMenu() {
     Serial.println("#######################################");
@@ -29,7 +46,7 @@ void OW_Bandit_lib::displayMenu() {
 
 }
 
-void OW_Bandit_lib::soundBeacon(uint8_t pinNumber) {
+void OW_Bandit_lib::soundBeacon() {
     Serial.println("Press 'M' to get back.");
 
     while (true) {
@@ -43,19 +60,19 @@ void OW_Bandit_lib::soundBeacon(uint8_t pinNumber) {
             }
         }
         for (int i = 0; i < 3; i++) {
-            tone(pinNumber, 1000);
+            tone(BUZZER, 1000);
             delay(250);
-            noTone(pinNumber);
+            noTone(BUZZER);
             delay(250);
         }
-        tone(pinNumber, 1000);
+        tone(BUZZER, 1000);
         delay(1000);
-        noTone(pinNumber);
+        noTone(BUZZER);
         delay(1000);
     }
 }
 
-void OW_Bandit_lib::getBatteryStatus(MAX17043 batteryMonitor) {
+void OW_Bandit_lib::getBatteryStatus() {
     float cellVoltage = batteryMonitor.getVCell();
     float stateOfCharge = batteryMonitor.getSoC();
 
@@ -67,16 +84,16 @@ void OW_Bandit_lib::getBatteryStatus(MAX17043 batteryMonitor) {
     Serial.println("%");
 }
 
-void OW_Bandit_lib::emulateIButton(uint8_t pinNumber) {
+void OW_Bandit_lib::emulateIButton() {
     Serial.println("Press 'M' to get back.");
-    OneWireSlave ows(pinNumber);
-    unsigned char rom[8] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
+    
+    unsigned char rom[IBUTTON_KEY_LENGTH] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
 
     ows.init(rom);
     ows.waitForRequest(false);
 }
 
-void OW_Bandit_lib::readIButton(OneWire ow) {
+void OW_Bandit_lib::readIButton(boolean saveToMemory) {
 
     Serial.println("Press 'M' to get back.");
     while (true) {
@@ -92,19 +109,12 @@ void OW_Bandit_lib::readIButton(OneWire ow) {
 
         while (true) {
 
-            byte addr[8] = {0};
+            byte addr[IBUTTON_KEY_LENGTH] = {0};
 
             if (!ow.search(addr)) {
                 ow.reset_search();
                 break;
             }
-
-            for (int i = 0; i < 8; i++) {
-                char buffer[2];
-                sprintf(buffer, "%02X", addr[i]);
-                Serial.print(buffer);
-            }
-            Serial.println("");
 
             if (OneWire::crc8(addr, 7) != addr[7]) {
                 Serial.println("CRC is not valid!");
@@ -115,8 +125,22 @@ void OW_Bandit_lib::readIButton(OneWire ow) {
                 Serial.println("Device is not a DS1990A family device.");
                 break;
             }
+
+            for (int i = 0; i < IBUTTON_KEY_LENGTH; i++) {
+                char buffer[2];
+                sprintf(buffer, "%02X", addr[i]);
+                Serial.print(buffer);
+            }
+
+//            if (saveToMemory) {
+//                eeprom.writeBytes(0x00, IBUTTON_KEY_LENGTH, addr);
+//            }
+
+            Serial.println("");
             ow.reset();
         }
-        delay(400);
+        delay(250);
     }
 }
+
+OW_Bandit_lib OW_Bandit = OW_Bandit_lib();

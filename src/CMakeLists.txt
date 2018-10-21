@@ -17,9 +17,11 @@ generate_arduino_library(OW_Bandit_lib
              MAX17043/MAX17043.cpp
              OneWireSlave/OneWireSlave.cpp
              OneWire/OneWire.cpp
+             EE24C32/EE24C32.cpp
         HDRS OW_Bandit_lib/OW_Bandit_lib.h
              MAX17043/MAX17043.h
              OneWireSlave/OneWireSlave.h
+             EE24C32/EE24C32.h
              OneWire/OneWire.h
         BOARD uno)
 
