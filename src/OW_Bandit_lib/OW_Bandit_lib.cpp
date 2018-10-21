@@ -1,7 +1,9 @@
+#include "Arduino.h"
 #include <MAX17043.h>
 #include <OneWire.h>
+#include <OneWireSlave.h>
+
 #include "OW_Bandit_lib.h"
-#include "Arduino.h"
 
 void OW_Bandit_lib::displayMenu() {
     Serial.println("#######################################");
@@ -16,12 +18,41 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println(" [5] - Write memory value to iButton");
     Serial.println(" [6] - Clone iButton");
     Serial.println(" [7] - Emulate iButton");
+    Serial.println(" [8] - Manual write to memory");
+    Serial.println(" [9] - Read memory values");
+    Serial.println(" [A, a] - Sound beacon");
     Serial.println();
     Serial.println(" [h, H, m, M, ?] - Back to main menu");
     Serial.println("=======================================");
     Serial.println("Command could not be longer than 1 char");
     Serial.println("=======================================");
 
+}
+
+void OW_Bandit_lib::soundBeacon(uint8_t pinNumber) {
+    Serial.println("Press 'M' to get back.");
+
+    while (true) {
+
+        if (Serial.available() > 0) {
+            char inByte = Serial.read();
+            if (inByte != 'M' && inByte != 'm') {
+                Serial.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
+            } else {
+                return;
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            tone(pinNumber, 1000);
+            delay(250);
+            noTone(pinNumber);
+            delay(250);
+        }
+        tone(pinNumber, 1000);
+        delay(1000);
+        noTone(pinNumber);
+        delay(1000);
+    }
 }
 
 void OW_Bandit_lib::getBatteryStatus(MAX17043 batteryMonitor) {
@@ -34,6 +65,15 @@ void OW_Bandit_lib::getBatteryStatus(MAX17043 batteryMonitor) {
     Serial.print("Charge:\t");
     Serial.print(stateOfCharge);
     Serial.println("%");
+}
+
+void OW_Bandit_lib::emulateIButton(uint8_t pinNumber) {
+    Serial.println("Press 'M' to get back.");
+    OneWireSlave ows(pinNumber);
+    unsigned char rom[8] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
+
+    ows.init(rom);
+    ows.waitForRequest(false);
 }
 
 void OW_Bandit_lib::readIButton(OneWire ow) {

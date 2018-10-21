@@ -216,6 +216,16 @@ bool OneWireSlave::waitForRequest(bool ignore_errors) {
   errno = ONEWIRE_NO_ERROR;
 
   for (;;) {
+
+      if (Serial.available() > 0) {
+          char inByte = Serial.read();
+          if (inByte != 'M' && inByte != 'm') {
+              Serial.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
+          } else {
+              return true;
+          }
+      }
+
     //delayMicroseconds(40);
     //Once reset is done, it waits another 30 micros
     //Master wait is 65, so we have 35 more to send our presence now that reset is done
@@ -223,7 +233,7 @@ bool OneWireSlave::waitForRequest(bool ignore_errors) {
       continue;
     }
     //Reset is complete, tell the master we are prsent
-    // This will pull the line low for 125 micros (155 micros since the reset) and 
+    // This will pull the line low for 125 micros (155 micros since the reset) and
     //  then wait another 275 plus whatever wait for the line to go high to a max of 480
     // This has been modified from original to wait for the line to go high to a max of 480.
     if (!presence() ) {

@@ -17,6 +17,10 @@ class OW_Bandit_lib {
 
         void readIButton(OneWire ow);
 
+        void emulateIButton(uint8_t pinNumber);
+
+        void soundBeacon(uint8_t pinNumber);
+
 };
 
 

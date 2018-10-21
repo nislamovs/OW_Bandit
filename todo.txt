@@ -6,7 +6,7 @@ Create schematic in Fritzner
 Add TP4056 charger                                                  OK
 Set correct resistor for charging current                           NOT NEEDED
 Add charging diode indication
-
+Add memory support
 
 
 Add script for HC-06 setup via usb-uart converter
@@ -19,9 +19,12 @@ Possibilities:
 - Get all recorded iButton codes
 - Manual write iButton
 - Write memory value to iButton
+- Manual write to memory
 - Clone ibutton
 - Emulate iButton                                                   OK
+- Emulate iButton from memory
 
 - Read memory values (with pagination)
 - Manual write to memory (with validation)
+- Sound signal beacon (in case You lost your device)                OK
 
