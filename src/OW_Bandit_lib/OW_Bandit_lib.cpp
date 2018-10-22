@@ -14,13 +14,14 @@ float OW_Bandit_lib::stateOfCharge;
 
 // Constructors ////////////////////////////////////////////////////////////////
 OW_Bandit_lib::OW_Bandit_lib()
-{
-}
+{}
 
 void OW_Bandit_lib::begin() {
     batteryMonitor.reset();
     batteryMonitor.quickStart();
     eeprom.begin(&Wire);
+    updateBatteryStatus();
+    updateMemoryStatus();
 }
 
 void OW_Bandit_lib::displayMenu() {
@@ -31,7 +32,7 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println(" [0] - Check battery status");
     Serial.println(" [1] - Read iButton");
     Serial.println(" [2] - Read iButton and save in memory");
-    Serial.println(" [3] - Get all recorded iButton codes");
+    Serial.println(" [3] - Dump all iButton codes");
     Serial.println(" [4] - Manual write iButton");
     Serial.println(" [5] - Write memory value to iButton");
     Serial.println(" [6] - Clone iButton");
@@ -49,6 +50,8 @@ void OW_Bandit_lib::displayMenu() {
 }
 
 void OW_Bandit_lib::displaySystemStatus() {
+
+    Serial.println();
 
     updateBatteryStatus();
     updateMemoryStatus();
@@ -87,6 +90,44 @@ void OW_Bandit_lib::makeBeep(unsigned long duration, unsigned long freq) {
     delay(duration);
 }
 
+void OW_Bandit_lib::dumpKeys() {
+
+    int curPos = getCurrentMemPos();
+    int keyCount = curPos / IBUTTON_KEY_LENGTH;
+    Serial.println((String)"About to dump " + keyCount + " keys... Proceed? y/n");
+
+    while(true) {
+
+        if (Serial.available() > 0) {
+            char inByte = Serial.read();
+            if (inByte == 'Y' || inByte == 'y') {
+                Serial.println("Dumping...");
+
+                for(int i = 0; i < curPos; i++) {
+                    int curKey = i / IBUTTON_KEY_LENGTH;
+                    if (i % IBUTTON_KEY_LENGTH == 0) {
+                        Serial.println();
+                        Serial.print(" [");
+                        curKey < 10 ? Serial.print("00") : Serial.print("0");
+                        Serial.print((String)curKey  + "]   ");
+                    }
+                    char buffer[2];
+                    sprintf(buffer, "%02X", eeprom.read(i));
+                    Serial.print(buffer);
+                }
+                Serial.println((String)"\n\nAll " + keyCount + " keys dumped!\n");
+
+                return;
+
+            } else if (inByte == 'N' || inByte == 'n' || inByte == 'M' || inByte == 'm') {
+                return;
+            } else {
+                Serial.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
+            }
+        }
+    }
+}
+
 void OW_Bandit_lib::soundBeacon() {
     Serial.println("Press 'M' to get back.");
 
@@ -112,9 +153,10 @@ void OW_Bandit_lib::updateBatteryStatus() {
 }
 
 void OW_Bandit_lib::updateMemoryStatus() {
-    int used = 0;
-    EEPROM.get(MEMORY_ADDRESS_CELL, used);
+    uint16_t used = getCurrentMemPos();
+//    Serial.println((String)"Debug used >>>" + used);
     usedMemory = used / IBUTTON_KEY_LENGTH;
+//    Serial.println((String)"Debug used >>>" + usedMemory);
 
     totalMemory = EE24C32_SIZE / IBUTTON_KEY_LENGTH;
     availableMemory = totalMemory - usedMemory;
@@ -170,10 +212,8 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
                 Serial.print(buffer);
             }
 
-
             if (saveToMemory) {
-                int address = 0;
-                EEPROM.get(MEMORY_ADDRESS_CELL, address);
+                int address = getCurrentMemPos();
 //                Serial.println();                                      //
 //                Serial.println((String)"memAddr before: " + address);  //
 
@@ -183,7 +223,7 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
 //                Serial.println((String)"memAddr after: " + address);  //
 //                Serial.println();                                     //
 
-                EEPROM.update(MEMORY_ADDRESS_CELL, address);
+                EEPROM.put(MEMORY_ADDRESS_CELL, address);
                 displayShortMemoryStatus();
             }
             Serial.println();
@@ -219,6 +259,13 @@ void OW_Bandit_lib::clearMemory() {
             }
         }
     }
+}
+
+int OW_Bandit_lib::getCurrentMemPos() {
+    int address = 0;
+    EEPROM.get(MEMORY_ADDRESS_CELL, address);
+
+    return address;
 }
 
 OW_Bandit_lib OW_Bandit = OW_Bandit_lib();

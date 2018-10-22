@@ -36,7 +36,7 @@ void loop() {
                 break;
 
             case '0':
-                Serial.println("Battery status:");
+                Serial.println("System status:");
                 OW_BANDIT.displaySystemStatus();
                 break;
 
@@ -48,6 +48,11 @@ void loop() {
             case '2':
                 Serial.println("Read iButton and save to memory:");
                 OW_BANDIT.readIButton(true);
+                break;
+
+            case '3':
+                Serial.println("Dump all keys:");
+                OW_BANDIT.dumpKeys();
                 break;
 
             case '7':

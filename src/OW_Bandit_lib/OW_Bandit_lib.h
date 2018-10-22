@@ -26,6 +26,7 @@ class OW_Bandit_lib {
         void emulateIButton();
         void soundBeacon();
         void clearMemory();
+        void dumpKeys();
 
     private:
         static MAX17043 batteryMonitor;
@@ -42,6 +43,7 @@ class OW_Bandit_lib {
         void updateBatteryStatus();
         void displayShortMemoryStatus();
         void makeBeep(unsigned long duration, unsigned long freq);
+        int getCurrentMemPos();
 };
 
 extern OW_Bandit_lib OW_BANDIT;

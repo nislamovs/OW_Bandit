@@ -1,25 +1,23 @@
 TODO:
 
 Create instructions on README.MD
-Rename repo
+Rename repo                                                                 OK
 Create schematic in Fritzner
-Add TP4056 charger                                                  OK
-Set correct resistor for charging current                           NOT NEEDED
+Add TP4056 charger                                                          OK
+Set correct resistor for charging current                                   NOT NEEDED
 Add charging diode indication
-Add memory support                                                  OK
-
+Add memory support                                                          OK
 
 Add script for HC-06 setup via usb-uart converter
-Create menu                                                         OK
-Features:
+Create menu                                                                 OK
 
-- Check battery status                                              OK
-- Read iButton                                                      OK
-- Read iButton and save in memory                                   OK
-- Get all recorded iButton codes                                        <-
-- Manual write iButton
+- Check battery status                                                      OK
+- Read iButton                                                              OK
+- Read iButton and save in memory                                           OK
+- Get all recorded iButton codes                                            OK
+- Manual write iButton                                                      NOT NEEDED
 - Write memory value to iButton
-- Manual write to memory
+- Manual write to memory                                                    NOT NEEDED
 - Clone ibutton
 
 - Emulate iButton (manual enter)
@@ -27,10 +25,9 @@ Features:
 
 - Read memory values (with pagination)
 - Manual write to memory (with validation)
-- Clear memory                                                      OK
-- Delete particular key
-- Reset cell counter                                                OK
-- Sound signal beacon (in case You lost your device)                OK
+- Clear memory                                                              OK
+- Delete particular key                                                     NOT NEEDED
+- Reset cell counter                                                        OK
+- Sound signal beacon (in case You lost your device)                        OK
 
-while adding new keys,
-show current key number and total key number
+while adding new keys, show current key number and total key number         OK
