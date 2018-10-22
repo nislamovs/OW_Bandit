@@ -23,6 +23,7 @@ generate_arduino_library(OW_Bandit_lib
         OneWireSlave/OneWireSlave.h
         EE24C32/EE24C32.h
         OneWire/OneWire.h
+        EEPROM/src/EEPROM.h
         BOARD uno)
 
 

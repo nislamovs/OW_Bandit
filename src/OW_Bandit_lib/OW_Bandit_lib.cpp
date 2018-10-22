@@ -1,9 +1,4 @@
 #include "Arduino.h"
-//#include <MAX17043.h>
-//#include <OneWire.h>
-//#include <OneWireSlave.h>
-//#include <EE24C32.h>
-
 #include "OW_Bandit_lib.h"
 
 // Initialize Class Variables //////////////////////////////////////////////////
@@ -11,6 +6,11 @@ MAX17043 OW_Bandit_lib::batteryMonitor;
 OneWire OW_Bandit_lib::ow(ONE_WIRE_HOST);
 OneWireSlave OW_Bandit_lib::ows(ONE_WIRE_SLAVE);
 EE24C32 OW_Bandit_lib::eeprom(EEPROM_ADDRESS);
+int OW_Bandit_lib::usedMemory;
+int OW_Bandit_lib::availableMemory;
+int OW_Bandit_lib::totalMemory;
+float OW_Bandit_lib::cellVoltage;
+float OW_Bandit_lib::stateOfCharge;
 
 // Constructors ////////////////////////////////////////////////////////////////
 OW_Bandit_lib::OW_Bandit_lib()
@@ -20,6 +20,7 @@ OW_Bandit_lib::OW_Bandit_lib()
 void OW_Bandit_lib::begin() {
     batteryMonitor.reset();
     batteryMonitor.quickStart();
+    eeprom.begin(&Wire);
 }
 
 void OW_Bandit_lib::displayMenu() {
@@ -38,12 +39,52 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println(" [8] - Manual write to memory");
     Serial.println(" [9] - Read memory values");
     Serial.println(" [A, a] - Sound beacon");
+    Serial.println(" [B, b] - Clear memory");
     Serial.println();
     Serial.println(" [h, H, m, M, ?] - Back to main menu");
     Serial.println("=======================================");
     Serial.println("Command could not be longer than 1 char");
     Serial.println("=======================================");
 
+}
+
+void OW_Bandit_lib::displaySystemStatus() {
+
+    updateBatteryStatus();
+    updateMemoryStatus();
+
+    Serial.println("==============Battery==================");
+    Serial.print("Voltage:\t");
+    Serial.print(cellVoltage, 4);
+    Serial.print("V;\t");
+    Serial.print("Charge:\t");
+    Serial.print(stateOfCharge);
+    Serial.println("%");
+    Serial.println();
+
+    Serial.println("===============Keys====================");
+    Serial.print("Used space:\t");
+    Serial.print(usedMemory);
+    Serial.println(" keys;\t");
+    Serial.print("Available space:\t");
+    Serial.print(availableMemory);
+    Serial.println(" keys;\t");
+    Serial.print("Total space:\t");
+    Serial.print(totalMemory);
+    Serial.println(" keys;\t");
+    Serial.println();
+}
+
+void OW_Bandit_lib::displayShortMemoryStatus() {
+    updateMemoryStatus();
+    Serial.print((String)"   [" + usedMemory + "/" + totalMemory + "]");
+}
+
+void OW_Bandit_lib::makeBeep(unsigned long duration, unsigned long freq) {
+    tone(BUZZER, freq);
+    delay(duration);
+    noTone(BUZZER);
+    delay(duration);
 }
 
 void OW_Bandit_lib::soundBeacon() {
@@ -59,29 +100,24 @@ void OW_Bandit_lib::soundBeacon() {
                 return;
             }
         }
-        for (int i = 0; i < 3; i++) {
-            tone(BUZZER, 1000);
-            delay(250);
-            noTone(BUZZER);
-            delay(250);
-        }
-        tone(BUZZER, 1000);
-        delay(1000);
-        noTone(BUZZER);
-        delay(1000);
+
+        for (int i = 0; i < 3; i++) makeBeep(250, 1000);
+        makeBeep(1000, 1000);
     }
 }
 
-void OW_Bandit_lib::getBatteryStatus() {
-    float cellVoltage = batteryMonitor.getVCell();
-    float stateOfCharge = batteryMonitor.getSoC();
+void OW_Bandit_lib::updateBatteryStatus() {
+    cellVoltage = batteryMonitor.getVCell();
+    stateOfCharge = batteryMonitor.getSoC();
+}
 
-    Serial.print("Voltage:\t");
-    Serial.print(cellVoltage, 4);
-    Serial.print("V;\t");
-    Serial.print("Charge:\t");
-    Serial.print(stateOfCharge);
-    Serial.println("%");
+void OW_Bandit_lib::updateMemoryStatus() {
+    int used = 0;
+    EEPROM.get(MEMORY_ADDRESS_CELL, used);
+    usedMemory = used / IBUTTON_KEY_LENGTH;
+
+    totalMemory = EE24C32_SIZE / IBUTTON_KEY_LENGTH;
+    availableMemory = totalMemory - usedMemory;
 }
 
 void OW_Bandit_lib::emulateIButton() {
@@ -109,37 +145,79 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
 
         while (true) {
 
-            byte addr[IBUTTON_KEY_LENGTH] = {0};
+            byte key[IBUTTON_KEY_LENGTH] = {0};
 
-            if (!ow.search(addr)) {
+            if (!ow.search(key)) {
                 ow.reset_search();
                 break;
             }
 
-            if (OneWire::crc8(addr, 7) != addr[7]) {
+            if (OneWire::crc8(key, 7) != key[7]) {
                 Serial.println("CRC is not valid!");
                 break;
             }
 
-            if (addr[0] != 0x01) {
+            if (key[0] != 0x01) {
                 Serial.println("Device is not a DS1990A family device.");
-                break;
+
+//                Uncomment this if You want to deal only with Dallas iButtons
+//                break;
             }
 
             for (int i = 0; i < IBUTTON_KEY_LENGTH; i++) {
                 char buffer[2];
-                sprintf(buffer, "%02X", addr[i]);
+                sprintf(buffer, "%02X", key[i]);
                 Serial.print(buffer);
             }
 
-//            if (saveToMemory) {
-//                eeprom.writeBytes(0x00, IBUTTON_KEY_LENGTH, addr);
-//            }
 
-            Serial.println("");
+            if (saveToMemory) {
+                int address = 0;
+                EEPROM.get(MEMORY_ADDRESS_CELL, address);
+//                Serial.println();                                      //
+//                Serial.println((String)"memAddr before: " + address);  //
+
+                eeprom.write(address, key, IBUTTON_KEY_LENGTH);
+                address += IBUTTON_KEY_LENGTH;
+
+//                Serial.println((String)"memAddr after: " + address);  //
+//                Serial.println();                                     //
+
+                EEPROM.update(MEMORY_ADDRESS_CELL, address);
+                displayShortMemoryStatus();
+            }
+            Serial.println();
             ow.reset();
         }
-        delay(250);
+        delay(400);
+    }
+}
+
+void OW_Bandit_lib::clearMemory() {
+    Serial.println("About to clear memory... Proceed? y/n");
+    while(true) {
+
+        if (Serial.available() > 0) {
+            char inByte = Serial.read();
+            if (inByte == 'Y' || inByte == 'y') {
+                Serial.println("Cleaning up...");
+                for(int i = 0; i < EE24C32_SIZE; i++) {
+                    eeprom.write(i, 0xFF);
+                    if (i % 128 == 0)
+                        Serial.print("#");
+                }
+                Serial.println();
+                EEPROM.put(MEMORY_ADDRESS_CELL, 0);
+                Serial.println("Memory cleared!");
+
+                return;
+
+            } else if (inByte == 'N' || inByte == 'n' || inByte == 'M' || inByte == 'm') {
+                return;
+            } else {
+                Serial.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
+            }
+        }
     }
 }
 

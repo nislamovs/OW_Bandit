@@ -8,12 +8,7 @@
 #include "EE24C32/EE24C32.h"
 #include "OW_Bandit_lib/OW_Bandit_lib.h"
 
-//#define EEPROM_ADDRESS 0x50
-
-//MAX17043 batteryMonitor;
-//OneWire ow(ONE_WIRE_HOST);
 OW_Bandit_lib OW_BANDIT;
-//EE24C32 eeprom(EEPROM_ADDRESS);
 
 void setup() {
 
@@ -42,7 +37,7 @@ void loop() {
 
             case '0':
                 Serial.println("Battery status:");
-                OW_BANDIT.getBatteryStatus();
+                OW_BANDIT.displaySystemStatus();
                 break;
 
             case '1':
@@ -64,6 +59,12 @@ void loop() {
             case 'a':
                 Serial.println("Sound beacon: ");
                 OW_BANDIT.soundBeacon();
+                break;
+
+            case 'B':
+            case 'b':
+                Serial.println("Clear memory: ");
+                OW_BANDIT.clearMemory();
                 break;
 
             default:
