@@ -7,6 +7,7 @@ Add TP4056 charger                                                          OK
 Set correct resistor for charging current                                   NOT NEEDED
 Add charging diode indication
 Add memory support                                                          OK
+Create PCB
 
 Add script for HC-06 setup via usb-uart converter
 Create menu                                                                 OK
@@ -14,20 +15,39 @@ Create menu                                                                 OK
 - Check battery status                                                      OK
 - Read iButton                                                              OK
 - Read iButton and save in memory                                           OK
-- Get all recorded iButton codes                                            OK
-- Manual write iButton                                                      NOT NEEDED
+- Dump all keys                                                             OK
+
+- Emulate iButton (manual enter)                                            <-
+- Emulate iButton from memory                                               <-
+
+- Manual write iButton
 - Write memory value to iButton
-- Manual write to memory                                                    NOT NEEDED
 - Clone ibutton
 
-- Emulate iButton (manual enter)
-- Emulate iButton from memory
+
 
 - Read memory values (with pagination)
-- Manual write to memory (with validation)
+- Manual write to memory (with validation - should be 8 bytes long)
 - Clear memory                                                              OK
-- Delete particular key                                                     NOT NEEDED
+- Delete particular key
 - Reset cell counter                                                        OK
 - Sound signal beacon (in case You lost your device)                        OK
 
 while adding new keys, show current key number and total key number         OK
+
+
+
+//Old menu
+
+ [0] - Check battery status
+ [1] - Read iButton
+ [2] - Read iButton and save in memory
+ [3] - Dump all iButton codes
+ [4] - Manual write iButton
+ [5] - Write memory value to iButton
+ [6] - Clone iButton
+ [7] - Emulate iButton
+ [8] - Manual write to memory
+ [9] - Read memory values
+ [A, a] - Sound beacon
+ [B, b] - Clear memory

@@ -33,8 +33,8 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println(" [1] - Read iButton");
     Serial.println(" [2] - Read iButton and save in memory");
     Serial.println(" [3] - Dump all iButton codes");
-    Serial.println(" [4] - Manual write iButton");
-    Serial.println(" [5] - Write memory value to iButton");
+    Serial.println(" [4] - Emulate iButton (manual enter)");
+    Serial.println(" [5] - Emulate iButton (from memory)");
     Serial.println(" [6] - Clone iButton");
     Serial.println(" [7] - Emulate iButton");
     Serial.println(" [8] - Manual write to memory");
@@ -108,14 +108,14 @@ void OW_Bandit_lib::dumpKeys() {
                     if (i % IBUTTON_KEY_LENGTH == 0) {
                         Serial.println();
                         Serial.print(" [");
-                        curKey < 10 ? Serial.print("00") : Serial.print("0");
+                        curKey < 10 ? Serial.print("00") : curKey < 100 ? Serial.print("0") : Serial.print("");
                         Serial.print((String)curKey  + "]   ");
                     }
                     char buffer[2];
                     sprintf(buffer, "%02X", eeprom.read(i));
                     Serial.print(buffer);
                 }
-                Serial.println((String)"\n\nAll " + keyCount + " keys dumped!\n");
+                Serial.println((String)"\n\nAll " + keyCount + " keys dumped successfully!\n");
 
                 return;
 
@@ -162,7 +162,54 @@ void OW_Bandit_lib::updateMemoryStatus() {
     availableMemory = totalMemory - usedMemory;
 }
 
-void OW_Bandit_lib::emulateIButton() {
+void OW_Bandit_lib::emulateIButtonManual() {
+
+    Serial.println("Press 'M' to get back.");
+    Serial.println();
+    Serial.println("Please type iButton key You want to emulate:");
+    while(true) {
+        String inBytes = "";
+        while (Serial.available()) {
+            inBytes = Serial.readString();
+            Serial.println(inBytes);
+            if(inBytes.length() > 1)
+                break;
+        }
+        Serial.println("Processing command...");
+        if (inBytes.length() == 1) {
+            //Processing command:
+            if (inBytes[0] != 'M' && inBytes[0] != 'm') {
+                Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
+            } else {
+                return;
+            }
+
+        } else if (inBytes.length() == IBUTTON_KEY_LENGTH * 2) {
+            //Processing key:
+            Serial.println((String) "Emulating key [" + inBytes + "]...");
+//                unsigned char rom[IBUTTON_KEY_LENGTH] = {0};
+//                sprintf(rom, inBytes, IBUTTON_KEY_LENGTH * 2);
+
+            for (int i = 0; i < IBUTTON_KEY_LENGTH * 2; i++) {
+                char buffer[2];
+                sprintf(buffer, "%02X", inBytes.charAt(i));
+                Serial.print(buffer);
+            }
+
+
+//                ows.init(rom);
+//                ows.waitForRequest(false);
+
+        } else if (inBytes.length() > 1 && inBytes.length() != IBUTTON_KEY_LENGTH * 2) {
+            //Processing invalid key:
+
+            Serial.println((String) "Invalid key [" + inBytes + "]; Press 'M' to get back.");
+        }
+//        delay(400);
+    }
+}
+
+void OW_Bandit_lib::emulateIButtonMemory() {
     Serial.println("Press 'M' to get back.");
 
     unsigned char rom[IBUTTON_KEY_LENGTH] = {0x28, 0xAD, 0xDA, 0xCE, 0x0F, 0x00, 0x11, 0x00};
@@ -211,9 +258,15 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
                 sprintf(buffer, "%02X", key[i]);
                 Serial.print(buffer);
             }
+            Serial.println();
 
             if (saveToMemory) {
                 int address = getCurrentMemPos();
+                if(EE24C32_SIZE - address < 2) {
+                    Serial.println("Memory is full.");
+                    break;
+                }
+
 //                Serial.println();                                      //
 //                Serial.println((String)"memAddr before: " + address);  //
 
@@ -226,7 +279,7 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
                 EEPROM.put(MEMORY_ADDRESS_CELL, address);
                 displayShortMemoryStatus();
             }
-            Serial.println();
+
             ow.reset();
         }
         delay(400);

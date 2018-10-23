@@ -23,10 +23,11 @@ class OW_Bandit_lib {
         void displayMenu();
         void displaySystemStatus();
         void readIButton(boolean saveToMemory);
-        void emulateIButton();
         void soundBeacon();
         void clearMemory();
         void dumpKeys();
+        void emulateIButtonManual();
+        void emulateIButtonMemory();
 
     private:
         static MAX17043 batteryMonitor;

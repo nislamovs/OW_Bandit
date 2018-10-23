@@ -55,9 +55,18 @@ void loop() {
                 OW_BANDIT.dumpKeys();
                 break;
 
+            case '4':
+                Serial.println("Emulate iButton (manual enter):");
+                OW_BANDIT.emulateIButtonManual();
+                break;
+
+            case '5':
+                Serial.println("Emulate iButton (from memory):");
+                OW_BANDIT.emulateIButtonMemory();
+                break;
+
             case '7':
                 Serial.println("Emulate iButton: ");
-                OW_BANDIT.emulateIButton();
                 break;
 
             case 'A':
