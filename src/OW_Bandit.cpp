@@ -82,7 +82,7 @@ void loop() {
                 break;
 
             default:
-                Serial.println((String)"Unknown command: [" + inByte + "] ");
+                Serial.println((String)"Unknown command: [" + (String)inByte + "] ");
                 break;
         }
         delay(1000);

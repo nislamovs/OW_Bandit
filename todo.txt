@@ -8,6 +8,7 @@ Set correct resistor for charging current                                   NOT 
 Add charging diode indication
 Add memory support                                                          OK
 Create PCB
+Add vibration motor
 
 Add script for HC-06 setup via usb-uart converter
 Create menu                                                                 OK
@@ -23,6 +24,7 @@ Create menu                                                                 OK
 - Manual write iButton
 - Write memory value to iButton
 - Clone ibutton
+
 
 
 

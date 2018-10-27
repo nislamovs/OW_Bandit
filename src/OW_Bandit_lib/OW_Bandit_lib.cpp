@@ -169,43 +169,46 @@ void OW_Bandit_lib::emulateIButtonManual() {
     Serial.println("Please type iButton key You want to emulate:");
     while(true) {
         String inBytes = "";
-        while (Serial.available()) {
+        if (Serial.available() > 0) {
             inBytes = Serial.readString();
-            Serial.println(inBytes);
-            if(inBytes.length() > 1)
-                break;
         }
-        Serial.println("Processing command...");
+
         if (inBytes.length() == 1) {
             //Processing command:
-            if (inBytes[0] != 'M' && inBytes[0] != 'm') {
+            if (inBytes.charAt(0) != 'M' && inBytes.charAt(0) != 'm') {
                 Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
+                Serial.println();
+                Serial.println("Please type iButton key You want to emulate:");
             } else {
+                Serial.println("Exiting...");
                 return;
             }
 
         } else if (inBytes.length() == IBUTTON_KEY_LENGTH * 2) {
             //Processing key:
             Serial.println((String) "Emulating key [" + inBytes + "]...");
-//                unsigned char rom[IBUTTON_KEY_LENGTH] = {0};
-//                sprintf(rom, inBytes, IBUTTON_KEY_LENGTH * 2);
 
             for (int i = 0; i < IBUTTON_KEY_LENGTH * 2; i++) {
                 char buffer[2];
                 sprintf(buffer, "%02X", inBytes.charAt(i));
-                Serial.print(buffer);
             }
 
+            ows.init(hexstr_to_char(inBytes));
+            ows.waitForRequest(false);
 
-//                ows.init(rom);
-//                ows.waitForRequest(false);
+            Serial.print("Stopped.");
+            Serial.println();
+            Serial.println();
+            Serial.println("Press 'M' to get back.");
+            Serial.println();
+            Serial.println("Please type iButton key You want to emulate:");
 
         } else if (inBytes.length() > 1 && inBytes.length() != IBUTTON_KEY_LENGTH * 2) {
             //Processing invalid key:
 
             Serial.println((String) "Invalid key [" + inBytes + "]; Press 'M' to get back.");
         }
-//        delay(400);
+        delay(400);
     }
 }
 
@@ -319,6 +322,41 @@ int OW_Bandit_lib::getCurrentMemPos() {
     EEPROM.get(MEMORY_ADDRESS_CELL, address);
 
     return address;
+}
+
+unsigned char * OW_Bandit_lib::hexstr_to_char(String hexstr) {
+
+    unsigned char result[IBUTTON_KEY_LENGTH+1] = {0};
+    int length = hexstr.length();
+    if (length != IBUTTON_KEY_LENGTH * 2) {
+        Serial.println("Key length is incorrect.");
+        return NULL;
+    }
+    for (int n = 0; n < IBUTTON_KEY_LENGTH * 2; n += 2) {
+        char buffer = 0x00;
+
+        //First halfbyte
+        if(hexstr.charAt(n) >= '0' && hexstr.charAt(n) <= '9')
+            buffer = (hexstr.charAt(n) - '0') << 4;
+        if(hexstr.charAt(n) >= 'A' && hexstr.charAt(n) <= 'F')
+            buffer = (hexstr.charAt(n) - 'A' + 10) << 4;
+        if(hexstr.charAt(n) >= 'a' && hexstr.charAt(n) <= 'f')
+            buffer = (hexstr.charAt(n) - 'a' + 10) << 4;
+
+        result[n/2] = buffer;
+
+        //Second halfbyte
+        if(hexstr.charAt(n+1) >= '0' && hexstr.charAt(n+1) <= '9')
+            buffer = (hexstr.charAt(n+1) - '0');
+        if(hexstr.charAt(n+1) >= 'A' && hexstr.charAt(n+1) <= 'F')
+            buffer = (hexstr.charAt(n+1) - 'A' + 10);
+        if(hexstr.charAt(n+1) >= 'a' && hexstr.charAt(n+1) <= 'f')
+            buffer = (hexstr.charAt(n+1) - 'a' + 10);
+
+        result[n/2] += buffer;
+    }
+
+    return result;
 }
 
 OW_Bandit_lib OW_Bandit = OW_Bandit_lib();

@@ -45,6 +45,7 @@ class OW_Bandit_lib {
         void displayShortMemoryStatus();
         void makeBeep(unsigned long duration, unsigned long freq);
         int getCurrentMemPos();
+        unsigned char* hexstr_to_char(String hexstr);
 };
 
 extern OW_Bandit_lib OW_BANDIT;
