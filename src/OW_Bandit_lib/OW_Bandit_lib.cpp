@@ -221,6 +221,73 @@ void OW_Bandit_lib::emulateIButtonMemory() {
     ows.waitForRequest(false);
 }
 
+void OW_Bandit_lib::calculateCRC() {
+    Serial.println("Press 'M' to get back.");
+    Serial.println();
+    Serial.println("Please type iButton key You want to calculate CRC for:");
+    while(true) {
+        String inBytes = "";
+        String key = "";
+        if (Serial.available() > 0) {
+            inBytes = Serial.readString();
+        }
+
+        if (inBytes.length() == 1) {
+            //Processing command:
+            if (inBytes.charAt(0) != 'M' && inBytes.charAt(0) != 'm') {
+                Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
+                Serial.println();
+                Serial.println("Please type iButton key You want to calculate CRC for:");
+            } else {
+                Serial.println("Exiting...");
+                return;
+            }
+        } else if (inBytes.length() > 1) {
+            key = inBytes.substring(0, (IBUTTON_KEY_LENGTH - 1) * 2);
+
+            if (isValidKey(key)) {
+                //Processing key (WITH OR WITHOUT CRC):
+                Serial.println();
+
+                Serial.print((String) "Calculating CRC for key [" + key + "]... ");
+
+                Serial.print("CRC : ");
+                Serial.print(OneWire::crc8(hexstr_to_char(key), 7), HEX);
+
+                Serial.println();
+                Serial.println("Press 'M' to get back.");
+                Serial.println();
+                Serial.println("Please type iButton key You want to calculate CRC for:");
+
+            } else {
+                //Processing invalid key:
+
+                Serial.println((String) "Invalid key [" + inBytes + "]; Press 'M' to get back.");
+            }
+        }
+        delay(400);
+    }
+}
+
+boolean OW_Bandit_lib::isValidKey(String key) {
+
+    if (    key.length() < (IBUTTON_KEY_LENGTH - 1) * 2
+         || key.length() > IBUTTON_KEY_LENGTH * 2 )
+        return false;
+
+    for (int n = 0; n < key.length(); n++) {
+        if(     (key.charAt(n) >= '0' && key.charAt(n) <= '9')
+            ||  (key.charAt(n) >= 'A' && key.charAt(n) <= 'F')
+            ||  (key.charAt(n) >= 'a' && key.charAt(n) <= 'f')) {
+            continue;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void OW_Bandit_lib::readIButton(boolean saveToMemory) {
 
     Serial.println("Press 'M' to get back.");
@@ -328,11 +395,11 @@ unsigned char * OW_Bandit_lib::hexstr_to_char(String hexstr) {
 
     unsigned char result[IBUTTON_KEY_LENGTH+1] = {0};
     int length = hexstr.length();
-    if (length != IBUTTON_KEY_LENGTH * 2) {
-        Serial.println("Key length is incorrect.");
-        return NULL;
-    }
-    for (int n = 0; n < IBUTTON_KEY_LENGTH * 2; n += 2) {
+//    if (length != IBUTTON_KEY_LENGTH * 2) {
+//        Serial.println("Key length is incorrect.");
+//        return NULL;
+//    }
+    for (int n = 0; n < length; n += 2) {
         char buffer = 0x00;
 
         //First halfbyte

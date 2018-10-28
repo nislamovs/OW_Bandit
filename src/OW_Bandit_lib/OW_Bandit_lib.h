@@ -28,6 +28,7 @@ class OW_Bandit_lib {
         void dumpKeys();
         void emulateIButtonManual();
         void emulateIButtonMemory();
+        void calculateCRC();
 
     private:
         static MAX17043 batteryMonitor;
@@ -46,6 +47,7 @@ class OW_Bandit_lib {
         void makeBeep(unsigned long duration, unsigned long freq);
         int getCurrentMemPos();
         unsigned char* hexstr_to_char(String hexstr);
+        boolean isValidKey(String key);
 };
 
 extern OW_Bandit_lib OW_BANDIT;

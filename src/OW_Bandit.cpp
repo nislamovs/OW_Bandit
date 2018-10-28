@@ -65,6 +65,11 @@ void loop() {
                 OW_BANDIT.emulateIButtonMemory();
                 break;
 
+            case '6':
+                Serial.println("Calculate CRC for key:");
+                OW_BANDIT.calculateCRC();
+                break;
+
             case '7':
                 Serial.println("Emulate iButton: ");
                 break;

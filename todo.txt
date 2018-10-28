@@ -18,13 +18,13 @@ Create menu                                                                 OK
 - Read iButton and save in memory                                           OK
 - Dump all keys                                                             OK
 
-- Emulate iButton (manual enter)                                            <-
+- Emulate iButton (manual enter)                                            OK
 - Emulate iButton from memory                                               <-
 
 - Manual write iButton
 - Write memory value to iButton
 - Clone ibutton
-
+- CRC calculator                                                            OK
 
 
 
