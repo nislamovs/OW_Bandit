@@ -42,12 +42,12 @@ void loop() {
 
             case '1':
                 Serial.println("Read iButton:");
-                OW_BANDIT.readIButton(false);
+                OW_BANDIT.readIButton(false, false);
                 break;
 
             case '2':
                 Serial.println("Read iButton and save to memory:");
-                OW_BANDIT.readIButton(true);
+                OW_BANDIT.readIButton(true, false);
                 break;
 
             case '3':
@@ -66,12 +66,18 @@ void loop() {
                 break;
 
             case '6':
-                Serial.println("Calculate CRC for key:");
-                OW_BANDIT.calculateCRC();
+                Serial.println("Manual write to memory:");
+                OW_BANDIT.manualWriteIButton(false);
                 break;
 
             case '7':
-                Serial.println("Emulate iButton: ");
+                Serial.println("Manual write to memory [overwrite]: ");
+                OW_BANDIT.manualWriteIButton(true);
+                break;
+
+            case '8':
+                Serial.println("Read iButton and save to memory [overwrite]:");
+                OW_BANDIT.readIButton(true, true);
                 break;
 
             case 'A':
@@ -84,6 +90,12 @@ void loop() {
             case 'b':
                 Serial.println("Clear memory: ");
                 OW_BANDIT.clearMemory();
+                break;
+
+            case 'C':
+            case 'c':
+                Serial.println("Calculate CRC for key:");
+                OW_BANDIT.calculateCRC();
                 break;
 
             default:

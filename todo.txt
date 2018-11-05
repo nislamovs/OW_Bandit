@@ -1,41 +1,52 @@
 TODO:
 
-Create instructions on README.MD
-Rename repo                                                                 OK
-Create schematic in Fritzner
-Add TP4056 charger                                                          OK
-Set correct resistor for charging current                                   NOT NEEDED
-Add charging diode indication
-Add memory support                                                          OK
-Create PCB
-Add vibration motor
+Rename repo                                                                         OK
+Add TP4056 charger                                                                  OK
+Set correct resistor for charging current                                           NOT NEEDED
+Add memory support                                                                  OK
+Add bashscript for HC-06 setup via usb-uart converter                               NOT NEEDED
+Create instructions on README.MD                                                    --
+Create schematic in Fritzner                                                        --
+Add charging diode indication                                                       --
+Create PCB                                                                          --
+Add vibration motor                                                                 --
+Migrate to Atmega2560                                                               --
+Add connected led indication                                                        --
 
-Add script for HC-06 setup via usb-uart converter
-Create menu                                                                 OK
-
-- Check battery status                                                      OK
-- Read iButton                                                              OK
-- Read iButton and save in memory                                           OK
-- Dump all keys                                                             OK
-
-- Emulate iButton (manual enter)                                            OK
-- Emulate iButton from memory                                               <-
-
-- Manual write iButton
-- Write memory value to iButton
-- Clone ibutton
-- CRC calculator                                                            OK
+Add HC-06 autosetup on first run                                                    --
+Add invitation string for commands (OW_BANDIT> or $>)                               --
+Reorganize menu                                                                     --
+Create DEBUG feature with time, funcname, etc                                       --
 
 
+Create menu                                                                         OK
 
-- Read memory values (with pagination)
-- Manual write to memory (with validation - should be 8 bytes long)
-- Clear memory                                                              OK
-- Delete particular key
-- Reset cell counter                                                        OK
-- Sound signal beacon (in case You lost your device)                        OK
+- Check battery status                                                              OK
+- Read iButton                                                                      OK
+- Read iButton and save in memory                                                   OK
+- Read iButton and save in memory (overwrite)                                       OK
+- Manual write to memory (with validation, auto crc calc , length)                  OK
+- Manual write to memory (with validation, auto crc calc , length) overwrite        OK
+- Dump all keys                                                                     OK
 
-while adding new keys, show current key number and total key number         OK
+- Emulate iButton (manual enter)                                                    OK
+- Emulate iButton from memory                                                       <-
+
+- Manual write iButton                                                              --
+- Write memory value to iButton                                                     --
+- Clone ibutton (+ possibility to check result)                                     --
+(check if keys are identical after cloning)                                         --
+
+- CRC calculator                                                                    OK
+- Memory optimization                                                               NOT NEEDED
+
+- Read memory values (with pagination)                                              NOT NEEDED
+- Clear memory                                                                      OK
+- Delete particular key                                                             NOT NEEDED
+- Reset cell counter                                                                OK
+- Sound signal beacon (in case You lost your device)                                OK
+
+while adding new keys, show current key number and total key number                 OK
 
 
 

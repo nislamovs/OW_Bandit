@@ -25,6 +25,7 @@ void OW_Bandit_lib::begin() {
 }
 
 void OW_Bandit_lib::displayMenu() {
+    Serial.println();
     Serial.println("#######################################");
     Serial.println("#-------Please select function:-------#");
     Serial.println("#######################################");
@@ -111,7 +112,7 @@ void OW_Bandit_lib::dumpKeys() {
                         curKey < 10 ? Serial.print("00") : curKey < 100 ? Serial.print("0") : Serial.print("");
                         Serial.print((String)curKey  + "]   ");
                     }
-                    char buffer[2];
+                    char buffer[2] = {0};
                     sprintf(buffer, "%02X", eeprom.read(i));
                     Serial.print(buffer);
                 }
@@ -188,11 +189,6 @@ void OW_Bandit_lib::emulateIButtonManual() {
             //Processing key:
             Serial.println((String) "Emulating key [" + inBytes + "]...");
 
-            for (int i = 0; i < IBUTTON_KEY_LENGTH * 2; i++) {
-                char buffer[2];
-                sprintf(buffer, "%02X", inBytes.charAt(i));
-            }
-
             ows.init(hexstr_to_char(inBytes));
             ows.waitForRequest(false);
 
@@ -235,6 +231,7 @@ void OW_Bandit_lib::calculateCRC() {
         if (inBytes.length() == 1) {
             //Processing command:
             if (inBytes.charAt(0) != 'M' && inBytes.charAt(0) != 'm') {
+                Serial.println();
                 Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
                 Serial.println();
                 Serial.println("Please type iButton key You want to calculate CRC for:");
@@ -252,7 +249,7 @@ void OW_Bandit_lib::calculateCRC() {
                 Serial.print((String) "Calculating CRC for key [" + key + "]... ");
 
                 Serial.print("CRC : ");
-                Serial.print(OneWire::crc8(hexstr_to_char(key), 7), HEX);
+                Serial.print(OneWire::crc8(hexstr_to_char(key), IBUTTON_KEY_LENGTH - 1), HEX);
 
                 Serial.println();
                 Serial.println("Press 'M' to get back.");
@@ -271,8 +268,8 @@ void OW_Bandit_lib::calculateCRC() {
 
 boolean OW_Bandit_lib::isValidKey(String key) {
 
-    if (    key.length() < (IBUTTON_KEY_LENGTH - 1) * 2
-         || key.length() > IBUTTON_KEY_LENGTH * 2 )
+    if (    key.length() != (IBUTTON_KEY_LENGTH - 1) * 2
+         && key.length() != IBUTTON_KEY_LENGTH * 2 )
         return false;
 
     for (int n = 0; n < key.length(); n++) {
@@ -288,10 +285,82 @@ boolean OW_Bandit_lib::isValidKey(String key) {
     return true;
 }
 
-void OW_Bandit_lib::readIButton(boolean saveToMemory) {
+
+void OW_Bandit_lib::manualWriteIButton(boolean overwrite) {
+
+    Serial.println();
+    Serial.println("Type key value (6 or 8 bytes). Press 'M' to get back.");
+    while(true) {
+        String input = "";
+        char key[IBUTTON_KEY_LENGTH + 1] = {0};
+        if (Serial.available() > 0) {
+            input = Serial.readString();
+            if (input.length() == 1 && input.charAt(0) == 'M' || input.charAt(0) == 'm') {
+                Serial.println("Exiting...");
+                return;
+            } else if (!isValidKey(input)) {
+                Serial.println("Key length doesn't fit into requirements. Exiting...");
+                return;
+            }
+
+            strcpy(key, (char *)hexstr_to_char(input)) ;
+            if (strlen(key) == IBUTTON_KEY_LENGTH - 1) {
+                Serial.println();
+                Serial.print("Calculating CRC...");
+                key[IBUTTON_KEY_LENGTH - 1] = OneWire::crc8((uint8_t *)key, IBUTTON_KEY_LENGTH - 1);
+                Serial.print("Done!");
+                Serial.println();
+            }
+
+            if (overwrite) {
+                updateMemoryStatus();
+                if (usedMemory == 0) {
+                    Serial.println();
+                    Serial.println("You have no keys in memory. Switching to appending mode.");
+                }
+            }
+
+            int address = usedMemory > 0 && overwrite ? getPreferedMemPos() : getCurrentMemPos();
+            if (address == -1)
+                return;
+
+            if (usedMemory == 0 || !overwrite) {
+                if (EE24C32_SIZE - address < 2) {
+                    Serial.println("Memory is full.");
+                    return;
+                }
+            }
+
+            eeprom.write(address, (uint8_t *)key, IBUTTON_KEY_LENGTH);
+
+            for (int i = address; i < address + IBUTTON_KEY_LENGTH; i++) {
+                char buffer[2] = {0};
+                sprintf(buffer, "%02X", eeprom.read(i));
+                Serial.print(buffer);
+            }
+
+            if (usedMemory == 0 || !overwrite) {
+                address += IBUTTON_KEY_LENGTH;
+                EEPROM.put(MEMORY_ADDRESS_CELL, address);
+                displayShortMemoryStatus();
+            }
+
+            Serial.println();
+            Serial.println("Done! Exiting...");
+            delay(400);
+            return;
+        }
+    }
+
+}
+
+void OW_Bandit_lib::readIButton(boolean saveToMemory, boolean overwrite) {
 
     Serial.println("Press 'M' to get back.");
     while (true) {
+
+        //todo
+        //put into separate func
 
         if (Serial.available() > 0) {
             char inByte = Serial.read();
@@ -312,48 +381,98 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory) {
             }
 
             if (OneWire::crc8(key, 7) != key[7]) {
+                Serial.println();
                 Serial.println("CRC is not valid!");
                 break;
             }
 
-            if (key[0] != 0x01) {
-                Serial.println("Device is not a DS1990A family device.");
+//            if (key[0] != 0x01) {
+//                Serial.println("Device is not a DS1990A family device.");
 
 //                Uncomment this if You want to deal only with Dallas iButtons
 //                break;
+//            }
+
+            if (saveToMemory && overwrite) {
+                updateMemoryStatus();
+                if (usedMemory == 0) {
+                    Serial.println();
+                    Serial.println("You have no keys in memory. Switching to appending mode.");
+                }
             }
 
+            Serial.println();
+
             for (int i = 0; i < IBUTTON_KEY_LENGTH; i++) {
-                char buffer[2];
+                char buffer[2] = {0};
                 sprintf(buffer, "%02X", key[i]);
                 Serial.print(buffer);
             }
-            Serial.println();
 
             if (saveToMemory) {
-                int address = getCurrentMemPos();
-                if(EE24C32_SIZE - address < 2) {
-                    Serial.println("Memory is full.");
-                    break;
+
+                int address = usedMemory > 0 && overwrite ? getPreferedMemPos() : getCurrentMemPos();
+
+                if (address == -1)
+                    return;
+
+                if (usedMemory == 0 || !overwrite) {
+                    if (EE24C32_SIZE - address < 2) {
+                        Serial.println("Memory is full.");
+                        break;
+                    }
                 }
 
-//                Serial.println();                                      //
-//                Serial.println((String)"memAddr before: " + address);  //
-
                 eeprom.write(address, key, IBUTTON_KEY_LENGTH);
-                address += IBUTTON_KEY_LENGTH;
 
-//                Serial.println((String)"memAddr after: " + address);  //
-//                Serial.println();                                     //
+                if (usedMemory == 0 || !overwrite) {
+                    address += IBUTTON_KEY_LENGTH;
 
-                EEPROM.put(MEMORY_ADDRESS_CELL, address);
-                displayShortMemoryStatus();
+                    EEPROM.put(MEMORY_ADDRESS_CELL, address);
+                    displayShortMemoryStatus();
+                }
             }
 
             ow.reset();
+
+            if(overwrite) {
+                Serial.println();
+                Serial.println("Done! Exiting...");
+                delay(400);
+                return;
+            }
         }
         delay(400);
     }
+}
+
+int OW_Bandit_lib::getPreferedMemPos() {
+    Serial.println();
+    Serial.println((String)"Put memory cell number (0 - " + (usedMemory - 1) + "). Cell data will be overwritten.");
+    while(true) {
+        if (Serial.available() > 0) {
+            String input = Serial.readString();
+            if (input.length() == 1 && input.charAt(0) == 'M' || input.charAt(0) == 'm') {
+                Serial.println("Exiting...");
+                return -1;
+            } else if (!isDigitOnly(input)) {
+                Serial.println((String) "Invalid number [" + input + "]; Press 'M' to get back.");
+            } else if (input.toInt() < 0 || input.toInt() >= usedMemory) {
+                Serial.println((String) "Cell number [" + input + "] is out of range; Press 'M' to get back.");
+            } else {
+                return input.toInt() * IBUTTON_KEY_LENGTH;
+            }
+        }
+    }
+}
+
+boolean OW_Bandit_lib::isDigitOnly(String strVal) {
+    for (int n = 0; n < strVal.length(); n++) {
+        if (strVal.charAt(n) < '0' || strVal.charAt(n) > '9')
+            return false;
+    }
+
+    return true;
 }
 
 void OW_Bandit_lib::clearMemory() {
@@ -393,7 +512,8 @@ int OW_Bandit_lib::getCurrentMemPos() {
 
 unsigned char * OW_Bandit_lib::hexstr_to_char(String hexstr) {
 
-    unsigned char result[IBUTTON_KEY_LENGTH+1] = {0};
+    unsigned char * result = (unsigned char *) malloc(sizeof(unsigned char) * IBUTTON_KEY_LENGTH + 1);
+//    unsigned char result[IBUTTON_KEY_LENGTH+1] = {0};
     int length = hexstr.length();
 //    if (length != IBUTTON_KEY_LENGTH * 2) {
 //        Serial.println("Key length is incorrect.");
@@ -422,6 +542,8 @@ unsigned char * OW_Bandit_lib::hexstr_to_char(String hexstr) {
 
         result[n/2] += buffer;
     }
+
+    result[length] = '\0';
 
     return result;
 }

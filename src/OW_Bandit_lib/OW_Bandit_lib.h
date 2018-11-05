@@ -22,13 +22,14 @@ class OW_Bandit_lib {
         void begin();
         void displayMenu();
         void displaySystemStatus();
-        void readIButton(boolean saveToMemory);
+        void readIButton(boolean saveToMemory, boolean overwrite);
         void soundBeacon();
         void clearMemory();
         void dumpKeys();
         void emulateIButtonManual();
         void emulateIButtonMemory();
         void calculateCRC();
+        void manualWriteIButton(boolean overwrite);
 
     private:
         static MAX17043 batteryMonitor;
@@ -46,8 +47,10 @@ class OW_Bandit_lib {
         void displayShortMemoryStatus();
         void makeBeep(unsigned long duration, unsigned long freq);
         int getCurrentMemPos();
+        int getPreferedMemPos();
         unsigned char* hexstr_to_char(String hexstr);
         boolean isValidKey(String key);
+        boolean isDigitOnly(String strVal);
 };
 
 extern OW_Bandit_lib OW_BANDIT;
