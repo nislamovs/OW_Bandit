@@ -5,18 +5,34 @@ Add TP4056 charger                                                              
 Set correct resistor for charging current                                           NOT NEEDED
 Add memory support                                                                  OK
 Add bashscript for HC-06 setup via usb-uart converter                               NOT NEEDED
+
+#Docs
 Create instructions on README.MD                                                    --
 Create schematic in Fritzner                                                        --
-Add charging diode indication                                                       --
+
+#Electronic part
 Create PCB                                                                          --
 Add vibration motor                                                                 --
 Migrate to Atmega2560                                                               --
-Add connected led indication                                                        --
+Add DC/DC convertor from battery to device 3v -> 5v                                 --
+
+# Input / output on device case
+Rocker switch for power                                                             --
+Power led                                                                           --
+ICSP socket                                                                         --
+USB charging socket                                                                 --
+iButton male socket                                                                 --
+iButton female socket                                                               --
+Buzzer                                                                              --
+Add charging diode indication                                                       --
+Bluetooth connection LED                                                            --
+Switch + socket for debugging (ch340, usb socket)                                   --
+
 
 Add HC-06 autosetup on first run                                                    --
 Add invitation string for commands (OW_BANDIT> or $>)                               --
 Reorganize menu                                                                     --
-Create DEBUG feature with time, funcname, etc                                       --
+Create DEBUG feature with time, funcname, etc                                       OK
 
 
 Create menu                                                                         OK
@@ -28,14 +44,15 @@ Create menu                                                                     
 - Manual write to memory (with validation, auto crc calc , length)                  OK
 - Manual write to memory (with validation, auto crc calc , length) overwrite        OK
 - Dump all keys                                                                     OK
+- Display memory content                                                            OK
 
 - Emulate iButton (manual enter)                                                    OK
-- Emulate iButton from memory                                                       <-
+- Emulate iButton from memory                                                       OK
 
-- Manual write iButton                                                              --
-- Write memory value to iButton                                                     --
-- Clone ibutton (+ possibility to check result)                                     --
-(check if keys are identical after cloning)                                         --
+# Manual program IButton features
+- Manual program iButton [interactive]                                              OK
+- Program memory value to iButton                                                   OK
+- Clone ibutton (+ possibility to check result)                                     OK
 
 - CRC calculator                                                                    OK
 - Memory optimization                                                               NOT NEEDED
@@ -47,7 +64,6 @@ Create menu                                                                     
 - Sound signal beacon (in case You lost your device)                                OK
 
 while adding new keys, show current key number and total key number                 OK
-
 
 
 //Old menu
@@ -64,3 +80,13 @@ while adding new keys, show current key number and total key number             
  [9] - Read memory values
  [A, a] - Sound beacon
  [B, b] - Clear memory
+
+ ------------------------------------------------------------------------------------------------------------
+
+- Next version
+
+- Key blank identification (RM1990.1, RM1990.2, TM2004)                             --
+- Key information (for what, displays key data as table)                            --
+- Use microsd card for key storage                                                  --
+
+

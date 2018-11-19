@@ -33,6 +33,7 @@ generate_arduino_library(OW_Bandit_lib
 # Command to generate code arduino firmware (.hex file)
 generate_arduino_firmware(${PROJECT_NAME}
         SRCS OW_Bandit.cpp
+        HDRS OW_Bandit.cpp
         LIBS OW_Bandit_lib
         BOARD uno
         )

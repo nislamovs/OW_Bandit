@@ -3,6 +3,12 @@
 
 #include <inttypes.h>
 
+#define ONEWIRE_SEARCH_ROM      0xF0
+#define ONEWIRE_READ_ROM        0x33
+#define ONEWIRE_MATCH_ROM       0x55
+#define ONEWIRE_SKIP_ROM        0xCC
+#define ONEWIRE_ALARMSEARCH     0xEC
+
 // you can exclude onewire_search by defining that to 0
 #ifndef ONEWIRE_SEARCH
 #define ONEWIRE_SEARCH 1
@@ -59,8 +65,12 @@ class OneWire
     // another read or write.
     void write( uint8_t v, uint8_t power = 0);
 
+    void write_bytes(const uint8_t *buf, uint16_t count, bool power = 0);
+
     // Read a byte.
     uint8_t read();
+
+    void read_bytes(uint8_t *buf, uint16_t count);
 
     // Write a bit. The bus is always left powered at the end, see
     // note in write() about that.

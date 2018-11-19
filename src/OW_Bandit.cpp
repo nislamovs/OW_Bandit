@@ -7,6 +7,7 @@
 #include "OneWireSlave/OneWireSlave.h"
 #include "EE24C32/EE24C32.h"
 #include "OW_Bandit_lib/OW_Bandit_lib.h"
+#include "OW_Bandit.h"
 
 OW_Bandit_lib OW_BANDIT;
 
@@ -17,6 +18,7 @@ void setup() {
     OW_BANDIT.begin();
     delay(1000);
 
+    if(DEBUG_MODE) Serial.println("Debug mode ON");
     OW_BANDIT.displayMenu();
 }
 
@@ -67,17 +69,22 @@ void loop() {
 
             case '6':
                 Serial.println("Manual write to memory:");
-                OW_BANDIT.manualWriteIButton(false);
+                OW_BANDIT.manualAddIButton(false);
                 break;
 
             case '7':
                 Serial.println("Manual write to memory [overwrite]: ");
-                OW_BANDIT.manualWriteIButton(true);
+                OW_BANDIT.manualAddIButton(true);
                 break;
 
             case '8':
                 Serial.println("Read iButton and save to memory [overwrite]:");
                 OW_BANDIT.readIButton(true, true);
+                break;
+
+            case '9':
+                Serial.println("View memory content:");
+                OW_BANDIT.showMemory();
                 break;
 
             case 'A':
@@ -96,6 +103,30 @@ void loop() {
             case 'c':
                 Serial.println("Calculate CRC for key:");
                 OW_BANDIT.calculateCRC();
+                break;
+
+            case 'D':
+            case 'd':
+                Serial.println("Manual program iButton [interactive] :");
+                OW_BANDIT.programIButtonManual();
+                break;
+
+            case 'E':
+            case 'e':
+                Serial.println("Program memory value to iButton:");
+                OW_BANDIT.programIButtonFromMemory();
+                break;
+
+            case 'F':
+            case 'f':
+                Serial.println("Clone iButton:");
+                OW_BANDIT.cloneIButton();
+                break;
+
+            case 'G':
+            case 'g':
+                Serial.println("Identify key blank type (RM1990.1, RM1990.2, TM2004): ");
+                OW_BANDIT.identifyKeyBlank();
                 break;
 
             default:
