@@ -432,8 +432,7 @@ void OW_Bandit_lib::displayShortMemoryStatus() {
 
 int OW_Bandit_lib::identifyKeyBlank() {
     if (DEBUG_MODE) { INFO(); }
-
-    //Not implemented
+    
 }
 
 void OW_Bandit_lib::timeSlot(unsigned char data) {
