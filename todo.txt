@@ -8,25 +8,29 @@ Add bashscript for HC-06 setup via usb-uart converter                           
 
 #Docs
 Create instructions on README.MD                                                    --
+write how to install :
+    avrdude                                                                         --
+write how to setup system                                                           --
 Create schematic in Fritzner                                                        --
+Create Youtube video with demonstration                                             --
 
 #Electronic part
 Create PCB                                                                          --
 Add vibration motor                                                                 --
 Migrate to Atmega2560                                                               --
 Add DC/DC convertor from battery to device 3v -> 5v                                 --
+ICSP socket                                                                         --
 
 # Input / output on device case
-Rocker switch for power                                                             --
-Power led                                                                           --
-ICSP socket                                                                         --
+Rocker switch or button for power + Power led                                       --
+#   Power led                                                                       --
 USB charging socket                                                                 --
 iButton male socket                                                                 --
 iButton female socket                                                               --
 Buzzer                                                                              --
-Add charging diode indication                                                       --
+Add charging diode indication (2 color LED)                                         --
 Bluetooth connection LED                                                            --
-Switch + socket for debugging (ch340, usb socket)                                   --
+#   Switch + socket for debugging (ch340, usb socket)                                   --
 
 
 Add HC-06 autosetup on first run                                                    --
@@ -49,7 +53,6 @@ Create menu                                                                     
 - Emulate iButton (manual enter)                                                    OK
 - Emulate iButton from memory                                                       OK
 
-# Manual program IButton features
 - Manual program iButton [interactive]                                              OK
 - Program memory value to iButton                                                   OK
 - Clone ibutton (+ possibility to check result)                                     OK
@@ -89,4 +92,73 @@ while adding new keys, show current key number and total key number             
 - Key information (for what, displays key data as table)                            --
 - Use microsd card for key storage                                                  --
 
+- Use ESP32 Wemos BT/Wifi                                                           --
+- Use Powerbank board for ESP32                                                     --
+- Bluetooth for console communication                                               --
+- Wifi for web page                                                                 --
+
+
+-----------------------------------------  PCB and circuit design  --------------------------------------------
+
+
+---   Elements (circuit):   ---
+
+
+[mainboard]
+mega2560                                                                            OK
+ + crystal (smd)                                                                    OK
+ + caps  (smd 0603)                                                                 OK
+ + iscp socket  (smd)                                                               OK
+EEPROM + resistors                                                                  OK
+reset circuit (res  = cap)                                                          --
+power circuit (caps)                                                                --
+uart smd connector                                                                  --
+leds for testing (green + red)                                                      --
+
+
+
+Mark "dead" zones on pcb                                                            OK
+
+
+TP4056 + 8205a MOSFET + DW01A + battery
+max17043 fuel gauge
+
+2.7-4.2 -> 5v DC/DC boost converter
+2.7-4.2 -> 3v DC/DC converter
+
+
+HC-06 bluetooth tranceiver with 3.3v line protection
+battery + connection socket
+usb -> uart converter for firmware update
+
+
+
+[controlboard]
+reset button                                                                            --
+usb socket                                                                              --
+charging led (2color) through hole                                                      --
+transmission led through hole                                                           --
+buzzer                                                                                  --
+vibromotor                                                                              --
+power button                                                                            --
+1wire input socket + potentiometer                                                      --
+1wire output socket + potentiometer                                                     --
+socket for connection with mainboard                                                    --
+
+debug mode switch                                                                       --
+make it possible to switch to this mode sending command to HC-06
+
+
+
+---   Proteus models:   ---
+icsp smd connector                                                      OK
+uart smd connector                                                      --
+TP4056                                                                  OK
+DW01A                                                                   OK
+8205A                                                                   OK
+MAX17043                                                                OK
+cp2102                                                                  --
+ams1117                                                                 --
+ltc3440                                                                 --
+ncp1402                                                                 --
 

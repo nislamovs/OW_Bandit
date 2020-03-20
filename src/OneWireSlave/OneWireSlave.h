@@ -32,9 +32,9 @@
   #elif dsslavepin == 21
   #define dsslaveassignedint 2
   #else
-  #error "Not an Interrupt Pin"
-  #error "Use 2, 3, 18, 19, 20 or 21"
-  #define dsslaveassignedint -1
+//  #error "Not an Interrupt Pin"
+//  #error "Use 2, 3, 18, 19, 20 or 21"
+//  #define dsslaveassignedint -1
   #endif
 #elif defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__) //Sanguino
   #if dsslavepin == 2

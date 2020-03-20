@@ -6,6 +6,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 #=============================================================================#
+#set(ARDUINO_SDK_PATH ~/Downloads/arduino-1.8.12-linux64/arduino-1.8.12/)
 set(CMAKE_SYSTEM_NAME Arduino)
 
 set(CMAKE_C_COMPILER   avr-gcc)
@@ -77,6 +78,7 @@ find_path(ARDUINO_SDK_PATH
 if(ARDUINO_SDK_PATH)
     list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${ARDUINO_SDK_PATH}/hardware/tools/avr)
     list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${ARDUINO_SDK_PATH}/hardware/tools/avr/utils)
+    list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${ARDUINO_SDK_PATH}/hardware/tools/avr/bin)
 else()
     message(FATAL_ERROR "Could not find Arduino SDK (set ARDUINO_SDK_PATH)!")
 endif()

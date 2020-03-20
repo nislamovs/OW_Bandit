@@ -1,5 +1,5 @@
-#ifndef ARDUINOEXAMPLE_OW_BANDIT_LIB_H
-#define ARDUINOEXAMPLE_OW_BANDIT_LIB_H
+#ifndef OW_BANDIT_LIB_H
+#define OW_BANDIT_LIB_H
 
 #include <inttypes.h>
 #include "../OneWire/OneWire.h"

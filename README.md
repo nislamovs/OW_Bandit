@@ -1,4 +1,4 @@
-Bluetooth iButton Reader/Writer/Emulator/Copier
+# Bluetooth iButton Reader/Writer/Emulator/Copier
 
 Status : Development
 
@@ -43,7 +43,6 @@ Status : Development
 ``` [9] - Read memory values ```
 
 ``` [A, a] - Sound beacon ```
-``` ```
 
 ``` [h, H, m, M, ?] - Back to main menu ```
 
@@ -53,3 +52,26 @@ Status : Development
 
 ```======================================= ```
 ``` ```
+
+
+**Circuit board**
+
+Used Proteus 7.10
+
+Path : ```~/.wine/drive_c/Program Files/Labcenter Electronics/Proteus 7 Professional```
+
+visit: ```https://github.com/gutierrezps/proteus-lib```
+
+### Preparation:
+
+First install `avrdude`:
+- `sudo apt install -y avrdude`
+
+Install `avr-gcc toolchain`:
+- `sudo apt install -y gcc-avr binutils-avr avr-libc`
+
+For more info check this: http://maxembedded.com/2015/06/setting-up-avr-gcc-toolchain-on-linux-and-mac-os-x/
+
+----------------------------------------------------------------------------------------------------
+##### GNU size (GNU Binutils) 2.26.20160125
+##### avrdude version 6.3, URL: <http://savannah.nongnu.org/projects/avrdude/>

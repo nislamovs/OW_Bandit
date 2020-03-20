@@ -4,7 +4,8 @@ set(PROJECT_NAME OW_Bandit)
 # Define your project and language
 project(${PROJECT_NAME} C CXX)
 
-set(${PROJECT_NAME}_BOARD nano328)
+#set(${PROJECT_NAME}_BOARD mega2560)
+set(${PROJECT_NAME}_BOARD mega2560)
 
 # Define the sources
 set(${PROJECT_NAME}_SRCS OW_Bandit.cpp)
@@ -24,7 +25,7 @@ generate_arduino_library(OW_Bandit_lib
         EE24C32/EE24C32.h
         OneWire/OneWire.h
         EEPROM/src/EEPROM.h
-        BOARD uno)
+        BOARD mega2560)
 
 
 # Define the port for uploading code to the Arduino
@@ -35,5 +36,4 @@ generate_arduino_firmware(${PROJECT_NAME}
         SRCS OW_Bandit.cpp
         HDRS OW_Bandit.cpp
         LIBS OW_Bandit_lib
-        BOARD uno
-        )
+        BOARD mega2560)

@@ -1,5 +1,5 @@
-#ifndef ARDUINOEXAMPLE_OW_BANDIT_H
-#define ARDUINOEXAMPLE_OW_BANDIT_H
+#ifndef OW_BANDIT_H
+#define OW_BANDIT_H
 
 #define DEBUG_MODE false
 

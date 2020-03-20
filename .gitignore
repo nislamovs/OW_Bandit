@@ -1,14 +1,21 @@
-### IntelliJ IDEA ###.
 **/.idea/*
 **/draft/*
 .idea
 *.iws
 *.iml
 *.ipr
+draft
+
 
 .cmake-build-debug
 cmake-build-debug
-build
+**/build/*
+
+CMakeFiles ;
+Makefile ;
+cmake_install.cmake ;
+CMakeCache.txt ;
+*.eep *.elf *.hex *.a ;
 
 #########################################
 Sources, that appears after project load
