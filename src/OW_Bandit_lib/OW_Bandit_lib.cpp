@@ -1,11 +1,12 @@
-#include "Arduino.h"
 #include "OW_Bandit_lib.h"
 
 // Initialize Class Variables //////////////////////////////////////////////////
 MAX17043 OW_Bandit_lib::batteryMonitor;
+HC06 OW_Bandit_lib::btComm;
 OneWire OW_Bandit_lib::ow(ONE_WIRE_HOST);
 OneWireSlave OW_Bandit_lib::ows(ONE_WIRE_SLAVE);
-EE24C32 OW_Bandit_lib::eeprom(EEPROM_ADDRESS);
+EE24C32 OW_Bandit_lib::eeprom(EEPROM_I2C_ADDRESS);
+
 int OW_Bandit_lib::usedMemory;
 int OW_Bandit_lib::availableMemory;
 int OW_Bandit_lib::totalMemory;
@@ -18,19 +19,25 @@ OW_Bandit_lib::OW_Bandit_lib()
 
 void OW_Bandit_lib::begin() {
     if (DEBUG_MODE) { INFO(); }
+    OW_BANDIT.makeBeep(250, 1000);
+
     batteryMonitor.reset();
     batteryMonitor.quickStart();
+
+    setupSerialComm();
+
     eeprom.begin(&Wire);
     updateBatteryStatus();
     updateMemoryStatus();
+    OW_BANDIT.makeBeep(1250, 1000);
 }
 
 void OW_Bandit_lib::displayMenu() {
     if (DEBUG_MODE) { INFO(); }
     Serial.println();
-    Serial.println("#######################################");
-    Serial.println("#-------Please select function:-------#");
-    Serial.println("#######################################");
+    Serial.println("##########################################");
+    Serial.println("#--------Please select function:---------#");
+    Serial.println("##########################################");
     Serial.println();
     Serial.println(" [0] - Check battery status");
     Serial.println(" [1] - Read iButton");
@@ -44,11 +51,16 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println(" [9] - Read memory values");
     Serial.println(" [A, a] - Sound beacon");
     Serial.println(" [B, b] - Clear memory");
+    Serial.println(" [C, c] - Calculate CRC for key");
+    Serial.println(" [D, d] - Program iButton [interactive]");
+    Serial.println(" [E, e] - Program iButton [from memory]");
+    Serial.println(" [F, f] - Clone iButton");
+    Serial.println(" [G, g] - Identify key blank type");
     Serial.println();
     Serial.println(" [h, H, m, M, ?] - Back to main menu");
-    Serial.println("=======================================");
-    Serial.println("Command could not be longer than 1 char");
-    Serial.println("=======================================");
+    Serial.println("==========================================");
+    Serial.println(" Command could not be longer than 1 char  ");
+    Serial.println("==========================================");
 
 }
 
@@ -432,7 +444,8 @@ void OW_Bandit_lib::displayShortMemoryStatus() {
 
 int OW_Bandit_lib::identifyKeyBlank() {
     if (DEBUG_MODE) { INFO(); }
-
+    Serial.print("Not implemented! Exiting...");
+    delay(1000);
 }
 
 void OW_Bandit_lib::timeSlot(unsigned char data) {
@@ -449,6 +462,14 @@ void OW_Bandit_lib::makeBeep(unsigned long duration, unsigned long freq) {
     tone(BUZZER, freq);
     delay(duration);
     noTone(BUZZER);
+    delay(duration);
+}
+
+void OW_Bandit_lib::enableVibro(unsigned long duration, unsigned long freq) {
+    if (DEBUG_MODE) { INFO(); }
+    tone(VIBROMOTOR, freq);
+    delay(duration);
+    noTone(VIBROMOTOR);
     delay(duration);
 }
 
@@ -517,6 +538,7 @@ void OW_Bandit_lib::soundBeacon() {
             }
         }
 
+        enableVibro(2500, 1000);
         for (int i = 0; i < 3; i++) makeBeep(250, 1000);
         makeBeep(1000, 1000);
     }
@@ -526,6 +548,12 @@ void OW_Bandit_lib::updateBatteryStatus() {
     if (DEBUG_MODE) { INFO(); }
     cellVoltage = batteryMonitor.getVCell();
     stateOfCharge = batteryMonitor.getSoC();
+}
+
+void OW_Bandit_lib::setupSerialComm() {
+    if (DEBUG_MODE) { INFO(); }
+    btComm.preset();
+    Serial.begin(115200);
 }
 
 void OW_Bandit_lib::updateMemoryStatus() {

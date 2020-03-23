@@ -19,11 +19,14 @@ generate_arduino_library(OW_Bandit_lib
         OneWireSlave/OneWireSlave.cpp
         OneWire/OneWire.cpp
         EE24C32/EE24C32.cpp
+        HC06/HC06.cpp
         HDRS OW_Bandit_lib/OW_Bandit_lib.h
         MAX17043/MAX17043.h
         OneWireSlave/OneWireSlave.h
         EE24C32/EE24C32.h
         OneWire/OneWire.h
+        HC06/HC06.h
+        constants/constants.h
         EEPROM/src/EEPROM.h
         BOARD mega2560)
 
@@ -34,6 +37,6 @@ generate_arduino_library(OW_Bandit_lib
 # Command to generate code arduino firmware (.hex file)
 generate_arduino_firmware(${PROJECT_NAME}
         SRCS OW_Bandit.cpp
-        HDRS OW_Bandit.cpp
+        HDRS OW_Bandit.h
         LIBS OW_Bandit_lib
         BOARD mega2560)

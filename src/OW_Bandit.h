@@ -1,11 +1,15 @@
 #ifndef OW_BANDIT_H
 #define OW_BANDIT_H
 
-#define DEBUG_MODE false
+    #include "./constants/constants.h"
+    #include "./HC06/HC06.h"
+    #include "./MAX17043/MAX17043.h"
+    #include "./OneWire/OneWire.h"
+    #include "./OneWireSlave/OneWireSlave.h"
+    #include "./EE24C32/EE24C32.h"
+    #include "./OW_Bandit_lib/OW_Bandit_lib.h"
+//    #include "./EEPROM/src/EEPROM.h"
 
-#ifdef DEBUG_MODE
-    #define INFO(...) Serial.println((String)"DEBUG : [ " + __FILE__ + " - " + __LINE__ + " - " + __func__ + " - " + __VA_ARGS__ + " ]")
-#endif
 
 
 #endif

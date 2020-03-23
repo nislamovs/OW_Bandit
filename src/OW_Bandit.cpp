@@ -1,20 +1,18 @@
-#include "Arduino.h"
-#include <util/delay.h>
-#include "Wire.h"
-
-#include "MAX17043/MAX17043.h"
-#include "OneWire/OneWire.h"
-#include "OneWireSlave/OneWireSlave.h"
-#include "EE24C32/EE24C32.h"
-#include "OW_Bandit_lib/OW_Bandit_lib.h"
+//#include "Arduino.h"
+//#include <util/delay.h>
+//#include "Wire.h"
+//
+//#include "MAX17043/MAX17043.h"
+//#include "OneWire/OneWire.h"
+//#include "OneWireSlave/OneWireSlave.h"
+//#include "EE24C32/EE24C32.h"
+//#include "OW_Bandit_lib/OW_Bandit_lib.h"
 #include "OW_Bandit.h"
 
 OW_Bandit_lib OW_BANDIT;
 
 void setup() {
-
     Wire.begin();
-    Serial.begin(115200);
     OW_BANDIT.begin();
     delay(1000);
 
@@ -107,13 +105,13 @@ void loop() {
 
             case 'D':
             case 'd':
-                Serial.println("Manual program iButton [interactive] :");
+                Serial.println("Program iButton [interactive]:");
                 OW_BANDIT.programIButtonManual();
                 break;
 
             case 'E':
             case 'e':
-                Serial.println("Program memory value to iButton:");
+                Serial.println("Program iButton [from memory]:");
                 OW_BANDIT.programIButtonFromMemory();
                 break;
 
@@ -125,7 +123,8 @@ void loop() {
 
             case 'G':
             case 'g':
-                Serial.println("Identify key blank type (RM1990.1, RM1990.2, TM2004): ");
+                Serial.println("Identify key blank type");
+                Serial.println("[RM1990.1, RM1990.2, TM2004]: ");
                 OW_BANDIT.identifyKeyBlank();
                 break;
 

@@ -11,15 +11,12 @@ Create instructions on README.MD                                                
 write how to install :
     avrdude                                                                         --
 write how to setup system                                                           --
-Create schematic in Fritzner                                                        --
+Create schematic in Fritzner                                                        NOT NEEDED
 Create Youtube video with demonstration                                             --
 
 #Electronic part
 Create PCB                                                                          --
-Add vibration motor                                                                 --
-Migrate to Atmega2560                                                               --
-Add DC/DC convertor from battery to device 3v -> 5v                                 --
-ICSP socket                                                                         --
+Migrate to Atmega2560                                                               OK
 
 # Input / output on device case
 Rocker switch or button for power + Power led                                       --
@@ -27,13 +24,13 @@ Rocker switch or button for power + Power led                                   
 USB charging socket                                                                 --
 iButton male socket                                                                 --
 iButton female socket                                                               --
-Buzzer                                                                              --
+Buzzer                                                                              OK
 Add charging diode indication (2 color LED)                                         --
 Bluetooth connection LED                                                            --
-#   Switch + socket for debugging (ch340, usb socket)                                   --
+#   Switch + socket for debugging (ch340, usb socket)                               OK
 
 
-Add HC-06 autosetup on first run                                                    --
+Add HC-06 autosetup on first run                                                    NOT NEEDED
 Add invitation string for commands (OW_BANDIT> or $>)                               --
 Reorganize menu                                                                     --
 Create DEBUG feature with time, funcname, etc                                       OK
@@ -110,55 +107,41 @@ mega2560                                                                        
  + caps  (smd 0603)                                                                 OK
  + iscp socket  (smd)                                                               OK
 EEPROM + resistors                                                                  OK
-reset circuit (res  = cap)                                                          --
-power circuit (caps)                                                                --
-uart smd connector                                                                  --
-leds for testing (green + red)                                                      --
+reset circuit (res  = cap)                                                          OK
+power circuit (caps)                                                                OK
+uart smd connector                                                                  OK
+leds for testing (green + red)                                                      OK
 
 
 
-Mark "dead" zones on pcb                                                            OK
+Mark "dead" zones on pcb                                                            --
+(I mean places where screws will pass through)
+
+TP4056 + 8205a MOSFET + DW01A + battery                                             OK
+max17043 fuel gauge                                                                 OK
+
+2.7-4.2 -> 5v DC/DC boost converter                                                 OK
+2.7-4.2 -> 3v DC/DC converter                                                       NOT NEEDED
 
 
-TP4056 + 8205a MOSFET + DW01A + battery
-max17043 fuel gauge
-
-2.7-4.2 -> 5v DC/DC boost converter
-2.7-4.2 -> 3v DC/DC converter
-
-
-HC-06 bluetooth tranceiver with 3.3v line protection
-battery + connection socket
-usb -> uart converter for firmware update
+HC-06 bluetooth tranceiver with 3.3v line protection                                OK
+battery + connection socket                                                         --
+usb -> uart converter for firmware update                                           OK
 
 
 
 [controlboard]
-reset button                                                                            --
-usb socket                                                                              --
-charging led (2color) through hole                                                      --
-transmission led through hole                                                           --
-buzzer                                                                                  --
-vibromotor                                                                              --
+reset button                                                                            OK
+usb socket                                                                              OK
+charging led (2color) through hole                                                      OK
+transmission led through hole                                                           OK
+buzzer                                                                                  OK
+vibromotor                                                                              OK
 power button                                                                            --
 1wire input socket + potentiometer                                                      --
 1wire output socket + potentiometer                                                     --
 socket for connection with mainboard                                                    --
 
 debug mode switch                                                                       --
-make it possible to switch to this mode sending command to HC-06
-
-
-
----   Proteus models:   ---
-icsp smd connector                                                      OK
-uart smd connector                                                      --
-TP4056                                                                  OK
-DW01A                                                                   OK
-8205A                                                                   OK
-MAX17043                                                                OK
-cp2102                                                                  --
-ams1117                                                                 --
-ltc3440                                                                 --
-ncp1402                                                                 --
+make it possible to switch to this mode sending command to HC-06                        --
 
