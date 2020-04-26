@@ -145,3 +145,40 @@ socket for connection with mainboard                                            
 debug mode switch                                                                       --
 make it possible to switch to this mode sending command to HC-06                        --
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Serial.println("System status:");                                                           Serial.println(" [0] - Check system status");
+Serial.println("Read iButton:");                                                            Serial.println(" [1] - Read iButton");
+Serial.println("Read iButton and save to memory:");                                         Serial.println(" [2] - Read iButton and save in memory");
+Serial.println("Dump all iButton keys:");                                                   Serial.println(" [3] - Dump all iButton keys");
+Serial.println("Emulate iButton (manual enter):");                                          Serial.println(" [4] - Emulate iButton (manual enter)");
+
+Serial.println("Emulate iButton (from memory):");                                           Serial.println(" [5] - Emulate iButton (from memory)");
+Serial.println("Manual write to memory [append]:");                                         Serial.println(" [6] - Manual write to memory");
+Serial.println("Manual write to memory [overwrite]:");                                      Serial.println(" [7] - Manual write to memory [overwrite]");
+Serial.println("Read iButton and save to memory [overwrite]:");                             Serial.println(" [8] - Read iButton and save to memory [overwrite]");
+Serial.println("View memory content:");                                                     Serial.println(" [9] - View memory content");
+Serial.println("Sound beacon: ");                                                           Serial.println(" [A, a] - Sound beacon");
+Serial.println("Clear memory: ");                                                           Serial.println(" [B, b] - Clear memory");
+Serial.println("Calculate CRC for key:");                                                   Serial.println(" [C, c] - Calculate CRC for key");
+Serial.println("Write iButton [interactive]:");                                             Serial.println(" [D, d] - Write iButton [interactive]");
+Serial.println("Write iButton [from memory]:");                                             Serial.println(" [E, e] - Write iButton [from memory]");
+Serial.println("Clone iButton:");                                                           Serial.println(" [F, f] - Clone iButton");
+Serial.println("Identify key blank type");                                                  Serial.println(" [G, g] - Identify key blank type");

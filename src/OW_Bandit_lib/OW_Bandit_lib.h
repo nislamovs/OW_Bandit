@@ -24,10 +24,9 @@ class OW_Bandit_lib {
         void cloneIButton();
         int identifyKeyBlank();
 
-        void makeBeep(unsigned long duration, unsigned long freq);
-
     private:
         static HC06 btComm;
+        static Signaling signaling;
         static MAX17043 batteryMonitor;
         static OneWire ow;
         static OneWireSlave ows;
@@ -39,13 +38,15 @@ class OW_Bandit_lib {
         static float stateOfCharge;
 
         void setupSerialComm();
+        void setupBatteryMonitor();
+        void setupMemory();
         void updateMemoryStatus();
         void updateBatteryStatus();
         void displayShortMemoryStatus();
 
-        void enableVibro(unsigned long duration, unsigned long freq);
         int getCurrentMemPos();
         int getPreferedMemPos();
+        String getModuleStatus(int cellAddress);
         unsigned char* hexstr_to_char(String hexstr);
         boolean isValidKey(String key);
         boolean isDigitOnly(String strVal);

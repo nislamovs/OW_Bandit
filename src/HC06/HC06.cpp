@@ -9,11 +9,12 @@ HC06::HC06() {
 void HC06::preset() {
     if (DEBUG_MODE) { INFO(); }
 
-    int status = 0x00;
+    int status;
     EEPROM.get(HC_06_STATUS_CELL, status);
     if (status != OK) {
         switchToATMode();
         setBaudrate();
+        setName(DEVICE_NAME);
         EEPROM.put(HC_06_STATUS_CELL, OK);
         delay(10);
     }
@@ -43,14 +44,36 @@ void HC06::switchToPairingMode(){
     delay(300);
 };
 
+void HC06::setName(String newName){
+    if (DEBUG_MODE) { INFO(); }
+
+    Serial.begin(38400);
+
+    Serial.print("AT+NAME=");
+    Serial.print(newName);
+    Serial.print(NEW_LINE);
+    delay(100);
+    Serial.print("AT+NAME?");
+    Serial.print(NEW_LINE);
+    delay(100);
+
+    delay(200);
+    Serial.end();
+};
+
 void HC06::setBaudrate(){
     if (DEBUG_MODE) { INFO(); }
 
     Serial.begin(38400);
-    Serial.println("AT+UART=115200,0,0\r\n");
+
+    Serial.print("AT+UART=115200,0,0");
+    Serial.print(NEW_LINE);
     delay(100);
-    Serial.println("AT+UART?\r\n");
-    delay(300);
+    Serial.print("AT+UART?");
+    Serial.print(NEW_LINE);
+    delay(100);
+
+    delay(200);
     Serial.end();
 };
 

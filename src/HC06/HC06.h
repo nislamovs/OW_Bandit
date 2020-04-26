@@ -14,6 +14,7 @@ private:
     void switchToATMode();
     void switchToPairingMode();
     void setBaudrate();
+    void setName(String newName);
     void powerOn();
     void powerOff();
     void restart();

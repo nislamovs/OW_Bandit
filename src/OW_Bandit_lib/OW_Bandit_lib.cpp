@@ -3,6 +3,7 @@
 // Initialize Class Variables //////////////////////////////////////////////////
 MAX17043 OW_Bandit_lib::batteryMonitor;
 HC06 OW_Bandit_lib::btComm;
+Signaling OW_Bandit_lib::signaling;
 OneWire OW_Bandit_lib::ow(ONE_WIRE_HOST);
 OneWireSlave OW_Bandit_lib::ows(ONE_WIRE_SLAVE);
 EE24C32 OW_Bandit_lib::eeprom(EEPROM_I2C_ADDRESS);
@@ -13,23 +14,19 @@ int OW_Bandit_lib::totalMemory;
 float OW_Bandit_lib::cellVoltage;
 float OW_Bandit_lib::stateOfCharge;
 
-// Constructors ////////////////////////////////////////////////////////////////
-OW_Bandit_lib::OW_Bandit_lib()
-{}
+OW_Bandit_lib::OW_Bandit_lib() {
+
+}
 
 void OW_Bandit_lib::begin() {
     if (DEBUG_MODE) { INFO(); }
-    OW_BANDIT.makeBeep(250, 1000);
+    signaling.devicePoweredUp();
 
-    batteryMonitor.reset();
-    batteryMonitor.quickStart();
-
+    setupBatteryMonitor();
     setupSerialComm();
+    setupMemory();
 
-    eeprom.begin(&Wire);
-    updateBatteryStatus();
-    updateMemoryStatus();
-    OW_BANDIT.makeBeep(1250, 1000);
+    signaling.deviceSetUp();
 }
 
 void OW_Bandit_lib::displayMenu() {
@@ -39,21 +36,21 @@ void OW_Bandit_lib::displayMenu() {
     Serial.println("#--------Please select function:---------#");
     Serial.println("##########################################");
     Serial.println();
-    Serial.println(" [0] - Check battery status");
+    Serial.println(" [0] - Check system status");
     Serial.println(" [1] - Read iButton");
-    Serial.println(" [2] - Read iButton and save in memory");
-    Serial.println(" [3] - Dump all iButton codes");
-    Serial.println(" [4] - Emulate iButton (manual enter)");
-    Serial.println(" [5] - Emulate iButton (from memory)");
-    Serial.println(" [6] - Clone iButton");
-    Serial.println(" [7] - Emulate iButton");
-    Serial.println(" [8] - Manual write to memory");
-    Serial.println(" [9] - Read memory values");
+    Serial.println(" [2] - Read iButton and save [append]");
+    Serial.println(" [3] - Read iButton and save [overwrite]");
+    Serial.println(" [4] - Dump all iButton keys");
+    Serial.println(" [5] - Emulate iButton [manual enter]");
+    Serial.println(" [6] - Emulate iButton [from memory]");
+    Serial.println(" [7] - Manual write to memory [append]");
+    Serial.println(" [8] - Manual write to memory [overwrite]");
+    Serial.println(" [9] - View memory content");
     Serial.println(" [A, a] - Sound beacon");
     Serial.println(" [B, b] - Clear memory");
     Serial.println(" [C, c] - Calculate CRC for key");
-    Serial.println(" [D, d] - Program iButton [interactive]");
-    Serial.println(" [E, e] - Program iButton [from memory]");
+    Serial.println(" [D, d] - Write iButton [interactive]");
+    Serial.println(" [E, e] - Write iButton [from memory]");
     Serial.println(" [F, f] - Clone iButton");
     Serial.println(" [G, g] - Identify key blank type");
     Serial.println();
@@ -71,26 +68,50 @@ void OW_Bandit_lib::displaySystemStatus() {
     updateBatteryStatus();
     updateMemoryStatus();
 
-    Serial.println("==============Battery==================");
-    Serial.print("Voltage:\t");
-    Serial.print(cellVoltage, 4);
-    Serial.print("V;\t");
-    Serial.print("Charge:\t");
-    Serial.print(stateOfCharge);
-    Serial.println("%");
+    Serial.println("================Battery===================");
+    Serial.print  ("Voltage:                          ");
+    Serial.print  (cellVoltage, 4);
+    Serial.print  ("V");
+
     Serial.println();
 
-    Serial.println("===============Keys====================");
-    Serial.print("Used space:\t");
-    Serial.print(usedMemory);
-    Serial.println(" keys;\t");
-    Serial.print("Available space:\t");
-    Serial.print(availableMemory);
-    Serial.println(" keys;\t");
-    Serial.print("Total space:\t");
-    Serial.print(totalMemory);
-    Serial.println(" keys;\t");
+    Serial.print  ("Charge:                           ");
+    Serial.print  (stateOfCharge);
+    Serial.print  ("%");
+
     Serial.println();
+
+    Serial.println();
+
+    Serial.println("=================Keys=====================");
+    Serial.print  ("Used space:                     ");
+    Serial.print  (usedMemory);
+    Serial.print  (" keys");
+
+    Serial.println();
+
+    Serial.print  ("Available space:               ");
+    Serial.print  (availableMemory);
+    Serial.print  (" keys");
+
+    Serial.println();
+
+    Serial.print  ("Total space:                    ");
+    Serial.print  (totalMemory);
+    Serial.print  (" keys");
+
+    Serial.println();
+
+    Serial.println();
+
+    Serial.println("=============System boot log==============");
+    Serial.println("Battery monitor status :              " + getModuleStatus(MAX17043_RESET_STATUS_CELL));
+    Serial.println("Bluetooth comm status  :              " + getModuleStatus(HC_06_STATUS_CELL));
+    Serial.println("Memory status          :              " + getModuleStatus(EXTERNAL_MEMORY_STATUS_CELL));
+    Serial.println("Memory position cursor :              " + String(getCurrentMemPos()));
+    Serial.println();
+    Serial.println("Version                :      " + String(VERSION));
+    delay(400);
 }
 
 void OW_Bandit_lib::showMemory() {
@@ -100,40 +121,47 @@ void OW_Bandit_lib::showMemory() {
     int pageSize = 16;
     int curPos =  getCurrentMemPos();
 
-    Serial.println("Press 'M' to get back, 'F' to next mem page, 'B' to prev mem page");
-    Serial.println();
-    displayMemValues(pageSize, pageNumber);
+    if (curPos == 0) {
+        Serial.println("Memory is empty! Exiting...");
+        Serial.println();
+        delay(400);
+        return;
+    } else {
+        Serial.println("Press 'M' to get back, 'F' to next mem page, 'B' to prev mem page");
+        Serial.println();
+        displayMemValues(pageSize, pageNumber);
 
-    while(true) {
-        String inBytes = "";
-        if (Serial.available() > 0) {
-            inBytes = Serial.readString();
+        while (true) {
+            String inBytes = "";
+            if (Serial.available() > 0) {
+                inBytes = Serial.readString();
 
-            if (inBytes.length() == 1) {
-                //Processing command:
-                if (inBytes.charAt(0) == 'M' || inBytes.charAt(0) == 'm') {
-                    Serial.println("Exiting...");
-                    return;
-                } else if (inBytes.charAt(0) == 'B' || inBytes.charAt(0) == 'b') {
-                    if (pageNumber > 0) pageNumber--;
-                    displayMemValues(pageSize, pageNumber);
+                if (inBytes.length() == 1) {
+                    //Processing command:
+                    if (inBytes.charAt(0) == 'M' || inBytes.charAt(0) == 'm') {
+                        Serial.println("Exiting...");
+                        return;
+                    } else if (inBytes.charAt(0) == 'B' || inBytes.charAt(0) == 'b') {
+                        if (pageNumber > 0) pageNumber--;
+                        displayMemValues(pageSize, pageNumber);
 
-                } else if (inBytes.charAt(0) == 'F' || inBytes.charAt(0) == 'f') {
-                    if (pageNumber < ((curPos / IBUTTON_KEY_LENGTH) / pageSize)) pageNumber++;
-                    displayMemValues(pageSize, pageNumber);
+                    } else if (inBytes.charAt(0) == 'F' || inBytes.charAt(0) == 'f') {
+                        if (pageNumber < ((curPos / IBUTTON_KEY_LENGTH) / pageSize)) pageNumber++;
+                        displayMemValues(pageSize, pageNumber);
+
+                    } else {
+                        Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
+                        Serial.println();
+                    }
 
                 } else {
-                    Serial.println("Invalid command [" + inBytes + "]; Press 'M' to get back.");
-                    Serial.println();
+                    //Processing invalid command:
+
+                    Serial.println((String) "Invalid command [" + inBytes + "]; Press 'M' to get back.");
                 }
-
-            } else {
-                //Processing invalid command:
-
-                Serial.println((String) "Invalid command [" + inBytes + "]; Press 'M' to get back.");
             }
+            delay(400);
         }
-        delay(400);
     }
 }
 
@@ -457,22 +485,6 @@ void OW_Bandit_lib::timeSlot(unsigned char data) {
     delay(10);
 }
 
-void OW_Bandit_lib::makeBeep(unsigned long duration, unsigned long freq) {
-    if (DEBUG_MODE) { INFO(); }
-    tone(BUZZER, freq);
-    delay(duration);
-    noTone(BUZZER);
-    delay(duration);
-}
-
-void OW_Bandit_lib::enableVibro(unsigned long duration, unsigned long freq) {
-    if (DEBUG_MODE) { INFO(); }
-    tone(VIBROMOTOR, freq);
-    delay(duration);
-    noTone(VIBROMOTOR);
-    delay(duration);
-}
-
 void OW_Bandit_lib::dumpKeys() {
     if (DEBUG_MODE) { INFO(); }
 
@@ -537,10 +549,7 @@ void OW_Bandit_lib::soundBeacon() {
                 return;
             }
         }
-
-        enableVibro(2500, 1000);
-        for (int i = 0; i < 3; i++) makeBeep(250, 1000);
-        makeBeep(1000, 1000);
+        signaling.enableBeacon();
     }
 }
 
@@ -550,19 +559,54 @@ void OW_Bandit_lib::updateBatteryStatus() {
     stateOfCharge = batteryMonitor.getSoC();
 }
 
+void OW_Bandit_lib::setupMemory() {
+    if (DEBUG_MODE) { INFO(); }
+    int status;
+    EEPROM.get(EXTERNAL_MEMORY_STATUS_CELL, status);
+
+    eeprom.begin(&Wire);
+
+    if (status != OK) {
+        for (int i = 0; i < EE24C32_SIZE; i++) {
+            eeprom.write(i, 0xFF);
+        }
+        delay(10);
+        EEPROM.put(MEMORY_ADDRESS_CELL, 0);
+        delay(10);
+        EEPROM.put(EXTERNAL_MEMORY_STATUS_CELL, OK);
+        delay(10);
+    }
+    updateMemoryStatus();
+}
+
 void OW_Bandit_lib::setupSerialComm() {
     if (DEBUG_MODE) { INFO(); }
     btComm.preset();
     Serial.begin(115200);
 }
 
+String OW_Bandit_lib::getModuleStatus(int cellAddress) {
+    if (DEBUG_MODE) { INFO(); }
+
+    int status = NOK;
+    EEPROM.get(cellAddress, status);
+
+    return status == NOK ? "NOK" : "OK";
+}
+
+void OW_Bandit_lib::setupBatteryMonitor() {
+    if (DEBUG_MODE) { INFO(); }
+    batteryMonitor.reset();
+    batteryMonitor.quickStart();
+    updateBatteryStatus();
+    EEPROM.put(MAX17043_RESET_STATUS_CELL, OK);
+}
+
 void OW_Bandit_lib::updateMemoryStatus() {
     if (DEBUG_MODE) { INFO(); }
-    uint16_t used = getCurrentMemPos();
-//    Serial.println((String)"Debug used >>>" + used);
-    usedMemory = used / IBUTTON_KEY_LENGTH;
-//    Serial.println((String)"Debug used >>>" + usedMemory);
 
+    uint16_t used = getCurrentMemPos();
+    usedMemory = used / IBUTTON_KEY_LENGTH;
     totalMemory = EE24C32_SIZE / IBUTTON_KEY_LENGTH;
     availableMemory = totalMemory - usedMemory;
 }
@@ -745,7 +789,7 @@ void OW_Bandit_lib::calculateCRC() {
 boolean OW_Bandit_lib::isValidKey(String key) {
     if (DEBUG_MODE) { INFO(); }
 
-    if (    key.length() != (IBUTTON_KEY_LENGTH - 1) * 2
+    if (    key.length() != (IBUTTON_KEY_LENGTH - 2) * 2
          && key.length() != IBUTTON_KEY_LENGTH * 2 )
         return false;
 
@@ -766,7 +810,8 @@ void OW_Bandit_lib::manualAddIButton(boolean overwrite) {
     if (DEBUG_MODE) { INFO(); }
 
     Serial.println();
-    Serial.println("Type key value (6 or 8 bytes). Press 'M' to get back.");
+    Serial.println("Type key value (6 or 8 bytes).");
+    Serial.println("Press 'M' to get back.");
     while(true) {
         String input = "";
         char key[IBUTTON_KEY_LENGTH + 1] = {0};
@@ -780,13 +825,15 @@ void OW_Bandit_lib::manualAddIButton(boolean overwrite) {
                 return;
             }
 
-            strcpy(key, (char *)hexstr_to_char(input)) ;
-            if (strlen(key) == IBUTTON_KEY_LENGTH - 1) {
+            if (input.length() == (IBUTTON_KEY_LENGTH - 2) * 2) {                                   //short key
+                strcpy(key, (char *)hexstr_to_char(DALLAS_IBUTTON_DEVICE_ID + input));
                 Serial.println();
                 Serial.print("Calculating CRC...");
                 key[IBUTTON_KEY_LENGTH - 1] = OneWire::crc8((uint8_t *)key, IBUTTON_KEY_LENGTH - 1);
                 Serial.print("Done!");
                 Serial.println();
+            } else {                                                                                // key with device id and crc
+                strcpy(key, (char *)hexstr_to_char(input)) ;
             }
 
             if (overwrite) {
@@ -908,6 +955,7 @@ void OW_Bandit_lib::readIButton(boolean saveToMemory, boolean overwrite) {
                     address += IBUTTON_KEY_LENGTH;
 
                     EEPROM.put(MEMORY_ADDRESS_CELL, address);
+                    signaling.shortVibro();
                     displayShortMemoryStatus();
                 }
             }
