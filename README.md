@@ -2,11 +2,11 @@
 
 Status : Development
 
-![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-05-47.png) <!-- .element height="50%" width="50%" -->
+![Pcb1](hardware/photos/layout/pcb1.png) <!-- .element height="50%" width="50%" -->
 
-![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-06-15.png) <!-- .element height="50%" width="50%" -->
+![Pcb2](hardware/photos/layout/pcb2.png) <!-- .element height="50%" width="50%" -->
 
-![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-06-47.png) <!-- .element height="50%" width="50%" -->
+![Pcb3](hardware/photos/layout/pcb3.png) <!-- .element height="50%" width="50%" -->
 
 **Diagnostics**
 
