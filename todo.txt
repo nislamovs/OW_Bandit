@@ -19,20 +19,20 @@ Create PCB                                                                      
 Migrate to Atmega2560                                                               OK
 
 # Input / output on device case
-Rocker switch or button for power + Power led                                       --
-#   Power led                                                                       --
-USB charging socket                                                                 --
-iButton male socket                                                                 --
-iButton female socket                                                               --
+Rocker switch or button for power + Power led                                       OK
+Power led                                                                           OK
+USB charging socket                                                                 OK
+iButton male socket                                                                 OK
+iButton female socket                                                               OK
 Buzzer                                                                              OK
-Add charging diode indication (2 color LED)                                         --
+Add charging diode indication (2 color LED)                                         OK
 Bluetooth connection LED                                                            --
 #   Switch + socket for debugging (ch340, usb socket)                               OK
 
 
 Add HC-06 autosetup on first run                                                    NOT NEEDED
-Add invitation string for commands (OW_BANDIT> or $>)                               --
-Reorganize menu                                                                     --
+Add invitation string for commands (OW_BANDIT> or $>)                               NOT NEEDED
+Reorganize menu                                                                     OK
 Create DEBUG feature with time, funcname, etc                                       OK
 
 
@@ -114,7 +114,7 @@ leds for testing (green + red)                                                  
 
 
 
-Mark "dead" zones on pcb                                                            --
+Mark "dead" zones on pcb                                                            OK
 (I mean places where screws will pass through)
 
 TP4056 + 8205a MOSFET + DW01A + battery                                             OK
@@ -125,7 +125,7 @@ max17043 fuel gauge                                                             
 
 
 HC-06 bluetooth tranceiver with 3.3v line protection                                OK
-battery + connection socket                                                         --
+battery + connection socket                                                         OK
 usb -> uart converter for firmware update                                           OK
 
 
@@ -137,13 +137,13 @@ charging led (2color) through hole                                              
 transmission led through hole                                                           OK
 buzzer                                                                                  OK
 vibromotor                                                                              OK
-power button                                                                            --
-1wire input socket + potentiometer                                                      --
-1wire output socket + potentiometer                                                     --
-socket for connection with mainboard                                                    --
+power button                                                                            OK
+1wire input socket + potentiometer                                                      OK
+1wire output socket + potentiometer                                                     OK
+socket for connection with mainboard                                                    OK
 
-debug mode switch                                                                       --
-make it possible to switch to this mode sending command to HC-06                        --
+debug mode switch                                                                        NOT NEEDED
+make it possible to switch to this mode sending command to HC-06                         NOT NEEDEDv
 
 
 

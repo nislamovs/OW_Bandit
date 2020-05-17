@@ -2,6 +2,9 @@
 
 Status : Development
 
+![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-05-47.png) <!-- .element height="50%" width="50%" -->
+![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-06-15.png) <!-- .element height="50%" width="50%" -->
+![Device](hardware/photos/layout/Screenshot from 2020-05-17 16-06-47.png) <!-- .element height="50%" width="50%" -->
 
 **Diagnostics**
 
