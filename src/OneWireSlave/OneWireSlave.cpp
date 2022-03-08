@@ -135,7 +135,7 @@ bool OneWireSlave::owsprint() {
 //		}
 //  } while(!DIRECT_READ(reg, mask));
 
-	//Serial.println(DIRECT_READ(reg, mask));
+	//Serial1.println(DIRECT_READ(reg, mask));
 	
 	delayMicroseconds(50);
 
@@ -217,10 +217,10 @@ bool OneWireSlave::waitForRequest(bool ignore_errors) {
 
   for (;;) {
 
-      if (Serial.available() > 0) {
-          char inByte = Serial.read();
+      if (Serial1.available() > 0) {
+          char inByte = Serial1.read();
           if (inByte != 'M' && inByte != 'm') {
-              Serial.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
+              Serial1.println((String) "Invalid command [" + inByte + "]; Press 'M' to get back.");
           } else {
               return true;
           }

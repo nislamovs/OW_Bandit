@@ -2,11 +2,11 @@
 
 Status : Development
 
-![Pcb1](hardware/photos/layout/pcb1.png) <!-- .element height="50%" width="50%" -->
+![Pcb1](hardware/photos/first_versions/pcb1.png) <!-- .element height="50%" width="50%" -->
 
-![Pcb2](hardware/photos/layout/pcb2.png) <!-- .element height="50%" width="50%" -->
+![Pcb2](hardware/photos/first_versions/pcb2.png) <!-- .element height="50%" width="50%" -->
 
-![Pcb3](hardware/photos/layout/pcb3.png) <!-- .element height="50%" width="50%" -->
+![Pcb3](hardware/photos/first_versions/pcb3.png) <!-- .element height="50%" width="50%" -->
 
 **Diagnostics**
 

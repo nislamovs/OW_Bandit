@@ -30,7 +30,7 @@ You can view all the examples [here](examples/).
 
 #### **`EEPROM.read( address )`** [[_example_]](examples/eeprom_read/eeprom_read.ino)
 
-This function allows you to read a single byte of data from the eeprom.
+This function allows you to read a single byte of data from the key_eeprom.
 Its only parameter is an `int` which should be set to the address you wish to read.
 
 The function returns an `unsigned char` containing the value read.

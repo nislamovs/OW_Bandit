@@ -21,6 +21,7 @@ generate_arduino_library(OW_Bandit_lib
         EE24C32/EE24C32.cpp
         HC06/HC06.cpp
         signaling/Signaling.cpp
+        AT24CM01/src/AT24CM01.cpp
         HDRS OW_Bandit_lib/OW_Bandit_lib.h
         MAX17043/MAX17043.h
         OneWireSlave/OneWireSlave.h
@@ -29,6 +30,7 @@ generate_arduino_library(OW_Bandit_lib
         HC06/HC06.h
         constants/constants.h
         signaling/Signaling.h
+        AT24CM01/src/AT24CM01.h
         EEPROM/src/EEPROM.h
         BOARD mega2560)
 

@@ -47,34 +47,34 @@ void HC06::switchToPairingMode(){
 void HC06::setName(String newName){
     if (DEBUG_MODE) { INFO(); }
 
-    Serial.begin(38400);
+    Serial1.begin(38400);
 
-    Serial.print("AT+NAME=");
-    Serial.print(newName);
-    Serial.print(NEW_LINE);
+    Serial1.print("AT+NAME=");
+    Serial1.print(newName);
+    Serial1.print(NEW_LINE);
     delay(100);
-    Serial.print("AT+NAME?");
-    Serial.print(NEW_LINE);
+    Serial1.print("AT+NAME?");
+    Serial1.print(NEW_LINE);
     delay(100);
 
     delay(200);
-    Serial.end();
+    Serial1.end();
 };
 
 void HC06::setBaudrate(){
     if (DEBUG_MODE) { INFO(); }
 
-    Serial.begin(38400);
+    Serial1.begin(38400);
 
-    Serial.print("AT+UART=115200,0,0");
-    Serial.print(NEW_LINE);
+    Serial1.print("AT+UART=115200,0,0");
+    Serial1.print(NEW_LINE);
     delay(100);
-    Serial.print("AT+UART?");
-    Serial.print(NEW_LINE);
+    Serial1.print("AT+UART?");
+    Serial1.print(NEW_LINE);
     delay(100);
 
     delay(200);
-    Serial.end();
+    Serial1.end();
 };
 
 void HC06::clearKeyPin(){

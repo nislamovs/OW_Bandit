@@ -23,6 +23,7 @@ class OW_Bandit_lib {
         void programIButtonFromMemory();
         void cloneIButton();
         int identifyKeyBlank();
+        void testNewMem();
 
     private:
         static HC06 btComm;
@@ -30,7 +31,8 @@ class OW_Bandit_lib {
         static MAX17043 batteryMonitor;
         static OneWire ow;
         static OneWireSlave ows;
-        static EE24C32 eeprom;
+        static EE24C32 key_eeprom;
+        static AT24CM01 journal_eeprom;
         static int usedMemory;
         static int availableMemory;
         static int totalMemory;
@@ -39,8 +41,9 @@ class OW_Bandit_lib {
 
         void setupSerialComm();
         void setupBatteryMonitor();
-        void setupMemory();
-        void updateMemoryStatus();
+        void setupKeyMemory();
+        void setupJournalMemory();
+        void updateKeyMemoryStatus();
         void updateBatteryStatus();
         void displayShortMemoryStatus();
 

@@ -8,6 +8,7 @@
 #include "./OneWire/OneWire.h"
 #include "./OneWireSlave/OneWireSlave.h"
 #include "./EE24C32/EE24C32.h"
+#include "./AT24CM01/src/AT24CM01.h"
 #include "./OW_Bandit_lib/OW_Bandit_lib.h"
 
 #endif
