@@ -1,12 +1,51 @@
 # Bluetooth iButton Reader/Writer/Emulator/Copier
 
-Status : Development
+### Description:
 
-![Pcb1](hardware/photos/first_versions/pcb1.png) <!-- .element height="50%" width="50%" -->
+- Status : Development
 
-![Pcb2](hardware/photos/first_versions/pcb2.png) <!-- .element height="50%" width="50%" -->
+### Device:
 
-![Pcb3](hardware/photos/first_versions/pcb3.png) <!-- .element height="50%" width="50%" -->
+![Pcb1](docs/photos/Rev_1.0/Screenshot from 2022-03-08 11-59-03.png) <!-- .element height="50%" width="50%" -->
+
+![Pcb2](docs/photos/Rev_1.0/Screenshot from 2022-03-08 11-59-21.png) <!-- .element height="50%" width="50%" -->
+
+![Pcb3](docs/photos/Rev_1.0/Screenshot from 2022-03-08 11-59-28.png) <!-- .element height="50%" width="50%" -->
+
+### Features:
+
+```
+ ####################################### 
+ #-------Please select function:-------# 
+ ####################################### 
+
+ [0] - Check battery status 
+ [1] - Read iButton 
+ [2] - Read iButton and save in memory 
+ [3] - Get all recorded iButton codes 
+ [4] - Manual write iButton 
+ [5] - Write memory value to iButton 
+ [6] - Clone iButton 
+ [7] - Emulate iButton
+ [8] - Manual write to memory 
+ [9] - Read memory values 
+ [A, a] - Sound beacon 
+ [B, b] - Clear memory
+ [C, c] - Calculate CRC for key
+ [D, d] - Write iButton [interactive]
+ [E, e] - Write iButton [from memory]
+ [F, f] - Clone iButton
+ [G, g] - Identify key blank type
+ [h, H, m, M, ?] - Back to main menu 
+
+======================================= 
+
+Command could not be longer than 1 char 
+
+=======================================
+ 
+```
+
 
 **Diagnostics**
 
@@ -18,54 +57,6 @@ Status : Development
  
 `sudo cu -l /dev/ttyUSB0 -s 9600`
 
-
-**Features**
-
-``` ####################################### ```
-
-``` #-------Please select function:-------# ```
-
-``` ####################################### ```
-
-``` [0] - Check battery status ```
-
-``` [1] - Read iButton ```
-
-``` [2] - Read iButton and save in memory ```
-
-``` [3] - Get all recorded iButton codes ```
-
-``` [4] - Manual write iButton ```
-
-``` [5] - Write memory value to iButton ```
-
-``` [6] - Clone iButton ```
-
-``` [7] - Emulate iButton```
-
-``` [8] - Manual write to memory ```
-
-``` [9] - Read memory values ```
-
-``` [A, a] - Sound beacon ```
-
-``` [h, H, m, M, ?] - Back to main menu ```
-
-```======================================= ```
-
-```Command could not be longer than 1 char ```
-
-```======================================= ```
-``` ```
-
-
-**Circuit board**
-
-Used Proteus 7.10
-
-Path : ```~/.wine/drive_c/Program Files/Labcenter Electronics/Proteus 7 Professional```
-
-visit: ```https://github.com/gutierrezps/proteus-lib```
 
 ### Preparation:
 
